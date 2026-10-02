@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Hand, Search, X } from 'lucide-react';
+import { Search, X } from 'lucide-react';
 import Layout from '../components/Layout';
 import Avatar from '../components/Avatar';
 import CategoryChips from '../components/CategoryChips';
@@ -102,21 +102,14 @@ export default function Feed() {
   return (
     <Layout>
       {/* Composer */}
-      <div className="card px-4 pt-3 pb-2">
-        <div className="flex items-center gap-2">
-          <Avatar id={me.id} name={me.display_name} url={me.avatar_url} size={40} link />
-          <button
-            className="grow h-10 rounded-full bg-field hover:bg-divider text-left px-4 text-ink-2 text-[15px] sm:text-[17px] truncate"
-            onClick={() => setComposerOpen(true)}
-          >
-            {t('feed.composer', { name: firstName })}
-          </button>
-        </div>
-        <div className="border-t border-divider mt-3 pt-1 flex">
-          <button className="btn-ghost grow" onClick={() => setComposerOpen(true)}>
-            <Hand size={20} className="text-brand" /> {t('feed.composer_hint')}
-          </button>
-        </div>
+      <div className="card p-3 flex items-center gap-2">
+        <Avatar id={me.id} name={me.display_name} url={me.avatar_url} size={40} link />
+        <button
+          className="grow h-10 rounded-full bg-field hover:bg-divider text-left px-4 text-ink-2 text-[15px] truncate"
+          onClick={() => setComposerOpen(true)}
+        >
+          {t('feed.composer', { name: firstName })}
+        </button>
       </div>
 
       {/* Filters + search */}
@@ -152,7 +145,7 @@ export default function Feed() {
       )}
       {q && people.length > 0 && (
         <div className="card p-3">
-          <h3 className="font-bold mb-2">{t('feed.people')}</h3>
+          <h3 className="font-semibold mb-2">{t('feed.people')}</h3>
           <ul className="flex gap-3 overflow-x-auto scrollbar-none">
             {people.map((p) => (
               <li key={p.id} className="shrink-0 w-24 text-center">
@@ -173,7 +166,6 @@ export default function Feed() {
         </>
       ) : requests.length === 0 ? (
         <EmptyState
-          icon={<Hand size={28} />}
           title={q || category ? t('feed.empty_filtered') : t('feed.empty_title')}
           body={q || category ? undefined : t('feed.empty_body', { city: t(`cities.${viewCity}`) })}
           action={

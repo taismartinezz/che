@@ -29,7 +29,7 @@ export default function Legal({ kind }: { kind: 'terms' | 'privacy' }) {
   return (
     <div className="min-h-screen bg-page flex flex-col">
       <header className="h-14 bg-card shadow-card flex items-center px-4 gap-3">
-        <Link to="/" className="h-10 w-10 rounded-full bg-brand text-white flex items-center justify-center font-extrabold">che</Link>
+        <Link to="/" className="text-xl font-bold text-brand">che</Link>
         <span className="font-semibold">{t(kind === 'terms' ? 'legal.terms_title' : 'legal.privacy_title')}</span>
       </header>
       <main className="grow flex justify-center px-0 sm:px-4 py-4">

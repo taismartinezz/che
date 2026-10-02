@@ -31,7 +31,7 @@ export default function CategoryChips(props: (Single | Multi) & { scroll?: boole
             className={props.value.includes(c.id) ? 'chip-on' : 'chip-off'}
             onClick={() => toggle(c.id)}
           >
-            <span aria-hidden>{c.emoji}</span> {t(`categories.${c.id}`)}
+            {t(`categories.${c.id}`)}
           </button>
         ))}
       </div>
@@ -58,7 +58,7 @@ export default function CategoryChips(props: (Single | Multi) & { scroll?: boole
           className={props.value === c.id ? 'chip-on' : 'chip-off'}
           onClick={() => props.onChange(props.value === c.id && props.allowAll ? null : c.id)}
         >
-          <span aria-hidden>{c.emoji}</span> {t(`categories.${c.id}`)}
+          {t(`categories.${c.id}`)}
         </button>
       ))}
     </div>
@@ -67,10 +67,5 @@ export default function CategoryChips(props: (Single | Multi) & { scroll?: boole
 
 export function CategoryTag({ id }: { id: string }) {
   const { t } = useTranslation();
-  const c = CATEGORIES.find((x) => x.id === id);
-  return (
-    <span className="tag bg-brand-soft text-brand">
-      {c?.emoji} {t(`categories.${id}`)}
-    </span>
-  );
+  return <span className="text-ink-2">{t(`categories.${id}`)}</span>;
 }

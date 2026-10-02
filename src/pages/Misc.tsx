@@ -26,7 +26,7 @@ export function Setup() {
     <div className="min-h-screen flex flex-col">
       <div className="grow flex items-center justify-center p-4">
         <div className="card p-6 max-w-lg space-y-3">
-          <div className="h-14 w-14 rounded-full bg-brand text-white flex items-center justify-center text-xl font-extrabold">che</div>
+          <div className="text-2xl font-bold text-brand">che</div>
           <h1 className="text-xl font-bold">{t('auth.setup_title')}</h1>
           <p className="text-[15px]">{t('auth.setup_body')}</p>
           <pre className="bg-field rounded p-3 text-xs overflow-x-auto">
@@ -44,7 +44,6 @@ export function NotFound() {
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="card p-8 text-center space-y-3">
-        <div className="text-5xl">🤷</div>
         <h1 className="text-xl font-bold">{t('errors.not_found')}</h1>
         <Link to="/" className="btn-primary">{t('nav.back_home')}</Link>
       </div>

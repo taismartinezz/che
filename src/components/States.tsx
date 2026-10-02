@@ -30,11 +30,10 @@ export function RowSkeleton({ rows = 3 }: { rows?: number }) {
   );
 }
 
-export function EmptyState({ icon, title, body, action }: { icon?: ReactNode; title: string; body?: string; action?: ReactNode }) {
+export function EmptyState({ title, body, action }: { icon?: ReactNode; title: string; body?: string; action?: ReactNode }) {
   return (
     <div className="card p-8 flex flex-col items-center text-center gap-2">
-      {icon && <div className="h-14 w-14 rounded-full bg-brand-soft text-brand flex items-center justify-center mb-1">{icon}</div>}
-      <h3 className="text-lg font-bold">{title}</h3>
+      <h3 className="font-semibold">{title}</h3>
       {body && <p className="text-ink-2 text-[15px] max-w-sm">{body}</p>}
       {action && <div className="mt-2">{action}</div>}
     </div>
@@ -55,7 +54,7 @@ export function Spinner({ size = 20 }: { size?: number }) {
 export function FullScreenLoader() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center gap-4">
-      <div className="h-16 w-16 rounded-full bg-brand text-white flex items-center justify-center text-2xl font-extrabold">che</div>
+      <div className="text-2xl font-bold text-brand">che</div>
       <Spinner />
     </div>
   );

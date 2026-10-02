@@ -73,7 +73,7 @@ export default function Admin() {
     <Layout variant="full">
       <h1 className="text-2xl font-bold px-1">{t('admin.title')}</h1>
       <section className="card p-4">
-        <h2 className="text-lg font-bold mb-3">{t('admin.metrics')}</h2>
+        <h2 className="font-semibold mb-3">{t('admin.metrics')}</h2>
         {!metrics ? (
           <RowSkeleton rows={2} />
         ) : (
@@ -90,7 +90,7 @@ export default function Admin() {
       </section>
 
       <section className="card p-4">
-        <h2 className="text-lg font-bold mb-3">{t('admin.reports')}</h2>
+        <h2 className="font-semibold mb-3">{t('admin.reports')}</h2>
         {reports === null ? (
           <RowSkeleton rows={3} />
         ) : reports.length === 0 ? (

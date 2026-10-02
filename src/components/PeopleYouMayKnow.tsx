@@ -52,14 +52,14 @@ export default function PeopleYouMayKnow({ limit = 5, big = false }: { limit?: n
           state === 'sent' ? (
             <span className="btn-secondary h-8 text-sm">{t('network.sent')}</span>
           ) : (
-            <button className="btn-soft h-8 text-sm" onClick={() => add(p.id)}>
-              <UserPlus size={16} /> {t('network.add')}
+            <button className="btn-secondary h-8 text-sm w-full" onClick={() => add(p.id)}>
+              {t('network.add')}
             </button>
           );
         return big ? (
-          <li key={p.id} className="card border border-divider overflow-hidden flex flex-col">
-            <Link to={`/perfil/${p.id}`} className="flex justify-center bg-brand-soft py-4">
-              <Avatar id={p.id} name={p.display_name} url={p.avatar_url} size={72} />
+          <li key={p.id} className="rounded-lg border border-divider flex flex-col">
+            <Link to={`/perfil/${p.id}`} className="flex justify-center pt-4">
+              <Avatar id={p.id} name={p.display_name} url={p.avatar_url} size={56} />
             </Link>
             <div className="p-3 flex flex-col gap-1 grow">
               <Link to={`/perfil/${p.id}`} className="font-semibold hover:underline truncate">
@@ -81,7 +81,7 @@ export default function PeopleYouMayKnow({ limit = 5, big = false }: { limit?: n
             {state === 'sent' ? (
               <span className="text-xs text-ink-2">{t('network.sent')}</span>
             ) : (
-              <button className="icon-btn h-8 w-8 bg-brand-soft text-brand" onClick={() => add(p.id)} aria-label={t('network.add')}>
+              <button className="icon-btn h-8 w-8 bg-transparent text-ink-2 hover:text-brand" onClick={() => add(p.id)} aria-label={t('network.add')}>
                 <UserPlus size={16} />
               </button>
             )}

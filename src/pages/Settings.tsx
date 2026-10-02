@@ -65,7 +65,7 @@ export default function Settings() {
         <h1 className="text-2xl font-bold px-1">{t('settings.title')}</h1>
 
         <section className="card p-4">
-          <h2 className="text-lg font-bold mb-4">{t('settings.profile')}</h2>
+          <h2 className="font-semibold mb-4">{t('settings.profile')}</h2>
           <ProfileForm
             profile={me}
             whatsapp={priv.contact_whatsapp}
@@ -78,7 +78,7 @@ export default function Settings() {
         </section>
 
         <section className="card p-4 space-y-2">
-          <h2 className="text-lg font-bold mb-2">{t('settings.preferences')}</h2>
+          <h2 className="font-semibold mb-2">{t('settings.preferences')}</h2>
           <div className="flex items-center justify-between">
             <span>{t('settings.language')}</span>
             <div className="flex rounded-lg bg-field p-1">
@@ -101,12 +101,12 @@ export default function Settings() {
         </section>
 
         <section className="card p-4">
-          <h2 className="text-lg font-bold mb-3">{t('settings.invite')}</h2>
+          <h2 className="font-semibold mb-3">{t('settings.invite')}</h2>
           <InviteLink />
         </section>
 
         <section className="card p-4">
-          <h2 className="text-lg font-bold mb-3">{t('settings.blocked')}</h2>
+          <h2 className="font-semibold mb-3">{t('settings.blocked')}</h2>
           {blocked.length === 0 ? (
             <p className="text-ink-2">{t('settings.no_blocked')}</p>
           ) : (

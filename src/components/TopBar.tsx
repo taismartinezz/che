@@ -77,8 +77,7 @@ function TabLink({ tab, compact }: { tab: (typeof TABS)[number]; compact?: boole
               isActive ? '' : 'group-hover:bg-hover'
             }`}
           >
-            <Icon size={compact ? 24 : 26} strokeWidth={isActive ? 2.4 : 2} />
-            {tab.soon && <span className="absolute top-2 right-[calc(50%-24px)] h-2 w-2 rounded-full bg-soon" aria-hidden />}
+            <Icon size={compact ? 22 : 24} strokeWidth={isActive ? 2.2 : 1.8} />
           </span>
           {isActive && <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-brand rounded-t" />}
         </>
@@ -128,7 +127,7 @@ export default function TopBar() {
   );
 
   return (
-    <header className="sticky top-0 z-40 bg-card shadow-card">
+    <header className="sticky top-0 z-40 bg-card border-b border-divider">
       <div className="h-14 px-2 sm:px-4 flex items-center gap-2">
         {/* Left: logo + search */}
         {mobileSearch ? (
@@ -164,7 +163,7 @@ export default function TopBar() {
               <MapPin size={19} />
             </button>
             <Popover open={openMenu === 'city'} className="sm:w-64">
-              <p className="px-2 py-1 text-lg font-bold">{t('nav.city')}</p>
+              <p className="px-2 py-1 font-semibold">{t('nav.city')}</p>
               {CITIES.map((c) => (
                 <button
                   key={c.id}
@@ -190,7 +189,6 @@ export default function TopBar() {
           </button>
           <button className="icon-btn h-9 w-9 sm:h-10 sm:w-10 relative" onClick={() => showSoon('chat')} title={t('nav.chat')} aria-label={t('nav.chat')}>
             <MessageCircle size={19} />
-            <span className="absolute -top-0.5 -right-0.5 h-3 w-3 rounded-full bg-soon ring-2 ring-card" aria-hidden />
           </button>
           <div className="relative">
             <button
@@ -221,7 +219,7 @@ export default function TopBar() {
               <Avatar id={me.id} name={me.display_name} url={me.avatar_url} size={40} />
             </button>
             <Popover open={openMenu === 'account'} className="sm:w-[340px]">
-              <Link to={`/perfil/${me.id}`} onClick={() => setOpenMenu(null)} className="card shadow-pop flex items-center gap-3 p-3 mb-2 hover:bg-hover">
+              <Link to={`/perfil/${me.id}`} onClick={() => setOpenMenu(null)} className="flex items-center gap-3 p-2 mb-1 rounded-lg hover:bg-hover border-b border-divider">
                 <Avatar id={me.id} name={me.display_name} url={me.avatar_url} size={40} />
                 <div>
                   <div className="font-semibold">{me.display_name}</div>
@@ -257,7 +255,7 @@ export default function TopBar() {
 function MenuRow({ icon, label, onClick, right }: { icon: ReactNode; label: string; onClick: () => void; right?: ReactNode }) {
   return (
     <button className="side-link" onClick={onClick}>
-      <span className="h-9 w-9 rounded-full bg-field flex items-center justify-center">{icon}</span>
+      <span className="text-ink-2">{icon}</span>
       <span className="grow">{label}</span>
       {right}
     </button>

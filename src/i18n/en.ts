@@ -266,7 +266,7 @@ const en: Translation = {
     copied: 'Link copied!',
     graph_hint: 'You in the centre, your friends in the first ring and their friends in the second.',
     more: 'and {{count}} more',
-    invite_connected: "Done! You're now connected with {{name}} 🎉",
+    invite_connected: "Done! You're now connected with {{name}}",
     sent_list: 'Sent requests',
   },
   profile: {
@@ -381,7 +381,7 @@ const en: Translation = {
     m_wau: 'Weekly active users',
     m_users: 'Users',
     reports: 'Reports',
-    no_reports: 'No reports. 🎉',
+    no_reports: 'No reports.',
     reporter: 'Reported by',
     target: 'About',
     dismiss: 'Dismiss',

@@ -1,5 +1,4 @@
 import { useTranslation } from 'react-i18next';
-import { Clock } from 'lucide-react';
 import Modal from './Modal';
 import { SOON_STAGE, type SoonFeature } from '../lib/constants';
 
@@ -22,10 +21,7 @@ export default function ComingSoonDialog({ feature, onClose }: { feature: SoonFe
         </button>
       }
     >
-      <div className="flex flex-col items-center text-center gap-3 py-2">
-        <div className="h-14 w-14 rounded-full bg-soon-bg text-soon flex items-center justify-center">
-          <Clock size={28} />
-        </div>
+      <div className="flex flex-col items-start gap-3">
         <SoonTag />
         <p className="text-[15px] leading-relaxed">{t(`soon.features.${feature}.desc`)}</p>
         <p className="text-sm text-ink-2">

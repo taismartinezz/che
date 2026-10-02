@@ -10,7 +10,7 @@ export default function Onboarding() {
   return (
     <div className="min-h-screen bg-page flex flex-col">
       <header className="h-14 bg-card shadow-card flex items-center justify-between px-4">
-        <div className="h-10 w-10 rounded-full bg-brand text-white flex items-center justify-center font-extrabold">che</div>
+        <div className="text-xl font-bold text-brand">che</div>
         <button className="btn-ghost" onClick={signOut}>{t('nav.sign_out')}</button>
       </header>
       <main className="grow flex justify-center px-0 sm:px-4 py-4 sm:py-8">

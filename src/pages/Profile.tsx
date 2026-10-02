@@ -1,15 +1,13 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Award, BadgeCheck, Ban, Briefcase, Check, Flag, HeartHandshake, MapPin, Pencil, Send, UserPlus, Clock } from 'lucide-react';
+import { Ban, Flag } from 'lucide-react';
 import Layout from '../components/Layout';
 import Avatar from '../components/Avatar';
 import Menu, { type MenuItem } from '../components/Menu';
-import { CategoryTag } from '../components/CategoryChips';
 import RequestCard from '../components/RequestCard';
 import EndorseDialog from '../components/EndorseDialog';
 import ReportDialog from '../components/ReportDialog';
-import { SoonTag } from '../components/ComingSoonDialog';
 import { EmptyState, PostSkeleton } from '../components/States';
 import { useMe } from '../context/AuthContext';
 import { useData } from '../context/DataContext';
@@ -134,61 +132,56 @@ export default function Profile() {
 
   return (
     <Layout variant="full">
-      <section className="card overflow-hidden">
-        <div className="h-32 sm:h-48 bg-gradient-to-br from-brand to-brand-hover" />
-        <div className="px-4 pb-4 flex flex-col sm:flex-row sm:items-start gap-3">
-          <div className="-mt-16 sm:-mt-20 shrink-0">
-            <Avatar id={person.id} name={person.display_name} url={person.avatar_url} size={136} ring />
+      <section className="card">
+        <div className="p-4 flex flex-col sm:flex-row sm:items-start gap-4">
+          <div className="shrink-0">
+            <Avatar id={person.id} name={person.display_name} url={person.avatar_url} size={88} />
           </div>
-          <div className="grow sm:pt-3">
-            <h1 className="text-[28px] sm:text-[32px] font-bold leading-tight">{person.display_name}</h1>
-            <div className="text-ink-2 flex flex-wrap items-center gap-x-3 gap-y-1">
-              {person.neighbourhood && (
-                <span className="inline-flex items-center gap-1">
-                  <MapPin size={16} /> {person.neighbourhood}, {person.city ? t(`cities.${person.city}`) : ''}
-                </span>
-              )}
-              <span className="inline-flex items-center gap-1">
-                <HeartHandshake size={16} /> {t('profile.exchanges', { count: exchangeCount })}
-              </span>
+          <div className="grow">
+            <h1 className="text-2xl font-semibold leading-tight">{person.display_name}</h1>
+            <div className="text-sm text-ink-2 mt-0.5">
+              {[
+                person.neighbourhood && `${person.neighbourhood}, ${person.city ? t(`cities.${person.city}`) : ''}`,
+                t('profile.exchanges', { count: exchangeCount }),
+              ]
+                .filter(Boolean)
+                .join(' · ')}
             </div>
-            <div className="flex flex-wrap gap-2 mt-2">
-              <button className="tag bg-field text-ink-2 gap-1 py-1" onClick={() => showSoon('verification')}>
-                <BadgeCheck size={14} /> {t('profile.verified_badge')} <SoonTag />
+            <div className="text-xs text-ink-2 mt-2 flex flex-wrap gap-x-3">
+              <button className="hover:underline" onClick={() => showSoon('verification')}>
+                {t('profile.verified_badge')} ({t('soon.tag').toLowerCase()})
               </button>
-              <button className="tag bg-field text-ink-2 gap-1 py-1" onClick={() => showSoon('registered_worker')}>
-                <Briefcase size={14} /> {t('profile.worker_badge')} <SoonTag />
+              <button className="hover:underline" onClick={() => showSoon('registered_worker')}>
+                {t('profile.worker_badge')} ({t('soon.tag').toLowerCase()})
               </button>
             </div>
           </div>
-          <div className="flex gap-2 sm:pt-4 flex-wrap">
+          <div className="flex gap-2 flex-wrap items-center">
             {isMe ? (
               <Link to="/ajustes" className="btn-secondary">
-                <Pencil size={18} /> {t('profile.edit')}
+                {t('profile.edit')}
               </Link>
             ) : (
               <>
                 {fs.state === 'friends' && (
                   <>
                     <button className="btn-primary" onClick={() => openWhatsApp(person.id, person.display_name)}>
-                      <Send size={18} /> {t('profile.write')}
+                      {t('profile.write')}
                     </button>
                     <button className="btn-secondary" onClick={() => setDialog('endorse')}>
-                      <Award size={18} /> {t('profile.endorse')}
+                      {t('profile.endorse')}
                     </button>
-                    <span className="btn-secondary cursor-default">
-                      <Check size={18} /> {t('network.friends_badge')}
-                    </span>
+                    <span className="text-sm text-ink-2 px-1">{t('network.friends_badge')}</span>
                   </>
                 )}
                 {fs.state === 'none' && (
                   <button className="btn-primary" onClick={() => act(() => api.sendFriendRequest(person.id))}>
-                    <UserPlus size={18} /> {t('profile.add_friend')}
+                    {t('profile.add_friend')}
                   </button>
                 )}
                 {fs.state === 'sent' && fs.connection && (
                   <button className="btn-secondary" onClick={() => act(() => api.removeConnection(fs.connection!.id))}>
-                    <Clock size={18} /> {t('network.cancel_request')}
+                    {t('network.cancel_request')}
                   </button>
                 )}
                 {fs.state === 'received' && fs.connection && (
@@ -213,18 +206,16 @@ export default function Profile() {
       <div className="grid wide:grid-cols-[2fr_3fr] gap-3 sm:gap-4 items-start">
         <div className="space-y-3 sm:space-y-4">
           <section className="card p-4">
-            <h2 className="text-lg font-bold mb-3">{t('profile.skills')}</h2>
+            <h2 className="font-semibold mb-3">{t('profile.skills')}</h2>
             {person.skills.length === 0 ? (
               <p className="text-ink-2">{t('profile.no_skills')}</p>
             ) : (
               <ul className="space-y-2">
                 {person.skills.map((s) => (
                   <li key={s} className="flex items-center justify-between gap-2">
-                    <CategoryTag id={s} />
+                    <span>{t(`categories.${s}`)}</span>
                     {endorsementsBy(s) > 0 && (
-                      <span className="text-sm text-ink-2 inline-flex items-center gap-1">
-                        <Award size={14} /> {t('recs.reasons.endorsements', { count: endorsementsBy(s) })}
-                      </span>
+                      <span className="text-sm text-ink-2">{t('recs.reasons.endorsements', { count: endorsementsBy(s) })}</span>
                     )}
                   </li>
                 ))}
@@ -233,7 +224,7 @@ export default function Profile() {
           </section>
 
           <section className="card p-4">
-            <h2 className="text-lg font-bold mb-3">{t('profile.endorsements')}</h2>
+            <h2 className="font-semibold mb-3">{t('profile.endorsements')}</h2>
             {endorsements.length === 0 ? (
               <p className="text-ink-2">{t('profile.no_endorsements')}</p>
             ) : (
@@ -255,7 +246,7 @@ export default function Profile() {
           </section>
 
           <section className="card p-4">
-            <h2 className="text-lg font-bold mb-3">{t('profile.thanks')}</h2>
+            <h2 className="font-semibold mb-3">{t('profile.thanks')}</h2>
             {thanks.filter((x) => x.thank_you_note).length === 0 ? (
               <p className="text-ink-2">{t('profile.no_thanks')}</p>
             ) : (
@@ -277,7 +268,7 @@ export default function Profile() {
         </div>
 
         <div className="space-y-3 sm:space-y-4">
-          <h2 className="text-lg font-bold px-1">{t('profile.requests')}</h2>
+          <h2 className="font-semibold px-1">{t('profile.requests')}</h2>
           {requests.length === 0 ? (
             <div className="card p-4 text-ink-2">{t('profile.no_requests')}</div>
           ) : (

@@ -159,7 +159,7 @@ export default function ProfileForm({ profile, whatsapp, submitLabel, requireTer
       <div>
         <label className="label" htmlFor="pf-wa">{t('onboarding.whatsapp')}</label>
         <input id="pf-wa" className="input" inputMode="tel" autoComplete="tel" placeholder="+598 99 123 456" value={phone} onChange={(e) => setPhone(e.target.value)} />
-        <p className="text-xs text-ink-2 mt-1">🔒 {t('onboarding.whatsapp_hint')}</p>
+        <p className="text-xs text-ink-2 mt-1">{t('onboarding.whatsapp_hint')}</p>
       </div>
 
       {requireTerms && (

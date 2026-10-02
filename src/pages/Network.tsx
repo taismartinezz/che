@@ -144,13 +144,13 @@ export default function Network() {
       </section>
 
       <section className="card p-4">
-        <h2 className="text-lg font-bold">{t('network.invite_title')}</h2>
+        <h2 className="font-semibold">{t('network.invite_title')}</h2>
         <p className="text-ink-2 text-sm mb-3">{t('network.invite_body')}</p>
         <InviteLink />
       </section>
 
       <section className="card p-4">
-        <h2 className="text-lg font-bold mb-3">{t('network.requests')}</h2>
+        <h2 className="font-semibold mb-3">{t('network.requests')}</h2>
         {incoming.length === 0 ? (
           <p className="text-ink-2">{t('network.no_requests')}</p>
         ) : (
@@ -194,12 +194,12 @@ export default function Network() {
       </section>
 
       <section className="card p-4">
-        <h2 className="text-lg font-bold mb-3">{t('network.pymk')}</h2>
+        <h2 className="font-semibold mb-3">{t('network.pymk')}</h2>
         <PeopleYouMayKnow limit={9} big />
       </section>
 
       <section className="card p-4">
-        <h2 className="text-lg font-bold mb-3">
+        <h2 className="font-semibold mb-3">
           {t('network.friends')} <span className="text-ink-2 font-normal">· {friends.length}</span>
         </h2>
         {nodes === null ? (

@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { HeartHandshake, Send, UserCheck } from 'lucide-react';
 import Layout from '../components/Layout';
 import Avatar from '../components/Avatar';
 import RequestCard from '../components/RequestCard';
@@ -96,11 +95,8 @@ export default function RequestPage() {
 
       {exchange && people[exchange.helper_id] && (
         <div className="card p-4 flex gap-3 items-center">
-          <span className="h-10 w-10 rounded-full bg-success/15 text-success flex items-center justify-center shrink-0">
-            <HeartHandshake size={22} />
-          </span>
           <div>
-            <div className="font-semibold">{t('request.resolved_by', { name: people[exchange.helper_id].display_name })}</div>
+            <div className="font-medium text-success">{t('request.resolved_by', { name: people[exchange.helper_id].display_name })}</div>
             {exchange.thank_you_note && (
               <div className="text-ink-2 italic">{t('request.resolved_note', { note: exchange.thank_you_note })}</div>
             )}
@@ -111,7 +107,7 @@ export default function RequestPage() {
       {isAuthor && (
         <>
           <section className="card p-4">
-            <h2 className="text-lg font-bold mb-3">{t('request.offers')}</h2>
+            <h2 className="font-semibold mb-3">{t('request.offers')}</h2>
             {offerIds.length === 0 ? (
               <p className="text-ink-2">{t('request.no_offers')}</p>
             ) : Object.keys(people).length === 0 ? (
@@ -135,13 +131,13 @@ export default function RequestPage() {
                       </div>
                       {isFriend || shared ? (
                         <button className="btn-primary h-8 text-sm" onClick={() => openWhatsApp(hid, p.display_name, waText)}>
-                          <Send size={16} /> {t('recs.write')}
+                          {t('recs.write')}
                         </button>
                       ) : intro ? (
                         <IntroStatus intro={intro} />
                       ) : request.status === 'open' ? (
-                        <button className="btn-soft h-8 text-sm" disabled={busy === hid} onClick={() => askContact(hid)}>
-                          <UserCheck size={16} /> {t('request.contact')}
+                        <button className="btn-secondary h-8 text-sm" disabled={busy === hid} onClick={() => askContact(hid)}>
+                          {t('request.contact')}
                         </button>
                       ) : null}
                     </li>
@@ -152,7 +148,7 @@ export default function RequestPage() {
           </section>
 
           <section className="card p-4">
-            <h2 className="text-lg font-bold mb-3">{t('request.intros')}</h2>
+            <h2 className="font-semibold mb-3">{t('request.intros')}</h2>
             {intros.length === 0 ? (
               <p className="text-ink-2">{t('request.no_intros')}</p>
             ) : (
@@ -181,7 +177,7 @@ export default function RequestPage() {
                       </div>
                       {done ? (
                         <button className="btn-primary h-8 text-sm" onClick={() => openWhatsApp(i.target_id, target?.display_name ?? '', waText)}>
-                          <Send size={16} /> {t('request.open_whatsapp')}
+                          {t('request.open_whatsapp')}
                         </button>
                       ) : (
                         <IntroStatus intro={i} />

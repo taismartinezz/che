@@ -266,7 +266,7 @@ const es = {
     copied: '¡Enlace copiado!',
     graph_hint: 'Vos en el centro, tus amigos en el primer anillo y sus amigos en el segundo.',
     more: 'y {{count}} más',
-    invite_connected: '¡Listo! Ya estás conectado/a con {{name}} 🎉',
+    invite_connected: '¡Listo! Ya estás conectado/a con {{name}}',
     sent_list: 'Solicitudes enviadas',
   },
   profile: {
@@ -378,7 +378,7 @@ const es = {
     m_wau: 'Usuarios activos (7 días)',
     m_users: 'Usuarios',
     reports: 'Reportes',
-    no_reports: 'No hay reportes. 🎉',
+    no_reports: 'No hay reportes.',
     reporter: 'Reportó',
     target: 'Sobre',
     dismiss: 'Descartar',

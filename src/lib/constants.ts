@@ -15,14 +15,14 @@ export const CITIES: { id: CityCode; neighbourhoods: string[] }[] = [
 export const neighbourhoodsFor = (city: CityCode | null | undefined) =>
   CITIES.find((c) => c.id === city)?.neighbourhoods ?? [];
 
-export const CATEGORIES: { id: CategoryId; emoji: string; sensitive?: boolean }[] = [
-  { id: 'tech', emoji: '💻' },
-  { id: 'clases', emoji: '📚' },
-  { id: 'mudanza', emoji: '🚚' },
-  { id: 'hogar', emoji: '🔧' },
-  { id: 'objetos', emoji: '🧰' },
-  { id: 'mascotas', emoji: '🐾' },
-  { id: 'cuidado', emoji: '🧸', sensitive: true },
+export const CATEGORIES: { id: CategoryId; sensitive?: boolean }[] = [
+  { id: 'tech' },
+  { id: 'clases' },
+  { id: 'mudanza' },
+  { id: 'hogar' },
+  { id: 'objetos' },
+  { id: 'mascotas' },
+  { id: 'cuidado', sensitive: true },
 ];
 
 export const SENSITIVE_CATEGORIES: CategoryId[] = ['cuidado'];

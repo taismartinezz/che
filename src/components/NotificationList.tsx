@@ -112,7 +112,7 @@ export default function NotificationList({ limit, onNavigate }: { limit?: number
               </>
             );
           } else if (fs.state === 'friends') {
-            actions = <span className="text-sm text-ink-2">{t('network.friends_badge')} ✓</span>;
+            actions = <span className="text-sm text-ink-2">{t('network.friends_badge')}</span>;
           }
         }
         if (n.type === 'intro_via' && intro) {
@@ -144,7 +144,7 @@ export default function NotificationList({ limit, onNavigate }: { limit?: number
                 </button>
               </>
             ) : intro.target_status === 'accepted' ? (
-              <button className="btn-soft h-8" onClick={() => openWhatsApp(intro.requester_id, p.from_name ?? '')}>
+              <button className="btn-secondary h-8" onClick={() => openWhatsApp(intro.requester_id, p.from_name ?? '')}>
                 {t('notifications.open_whatsapp')}
               </button>
             ) : (
@@ -154,15 +154,15 @@ export default function NotificationList({ limit, onNavigate }: { limit?: number
         if (n.type === 'intro_accepted' && p.other_id) {
           const otherId = p.other_id;
           actions = (
-            <button className="btn-soft h-8" onClick={() => openWhatsApp(otherId, p.other_name ?? '')}>
+            <button className="btn-secondary h-8" onClick={() => openWhatsApp(otherId, p.other_name ?? '')}>
               {t('notifications.open_whatsapp')}
             </button>
           );
         }
 
         return (
-          <li key={n.id} className={`rounded-lg p-2 flex gap-3 hover:bg-hover ${n.read_at ? '' : 'bg-brand-soft/60'}`}>
-            <Avatar id={actorId} name={actor || 'Che'} size={48} />
+          <li key={n.id} className="rounded-lg p-2 flex gap-3 hover:bg-hover">
+            <Avatar id={actorId} name={actor || 'Che'} size={40} />
             <div className="min-w-0 grow">
               <button className="text-left text-[15px] leading-snug w-full" onClick={() => go(n)}>
                 <RichText i18nKey={`notifications.types.${key}`} values={values} />
@@ -172,7 +172,7 @@ export default function NotificationList({ limit, onNavigate }: { limit?: number
               </div>
               {actions && <div className="flex gap-2 mt-2 flex-wrap">{actions}</div>}
             </div>
-            {!n.read_at && <span className="h-3 w-3 rounded-full bg-brand mt-4 shrink-0" aria-hidden />}
+            {!n.read_at && <span className="h-2 w-2 rounded-full bg-brand mt-2 shrink-0" aria-hidden />}
           </li>
         );
       })}

@@ -22,7 +22,7 @@ export default function InviteLink({ compact }: { compact?: boolean }) {
   };
   if (compact)
     return (
-      <button className="btn-soft w-full" onClick={copy}>
+      <button className="btn-secondary w-full" onClick={copy}>
         <Link2 size={18} /> {t('network.copy_link')}
       </button>
     );

@@ -10,16 +10,16 @@ Che only connects people. It never sets prices, assigns jobs or employs anyone. 
 
 | Area | Status |
 | --- | --- |
-| Email magic link + Google sign-in, onboarding (name, city, neighbourhood, photo, skills, private WhatsApp, Terms and Privacy acceptance) | ✅ |
-| Live feed per city, composer ("Crear pedido"), category filters, search (requests + people) | ✅ |
-| "Ta, te ayudo" offers, with a notification to the author | ✅ |
-| Friend requests, invite links `/invite/:code` (auto-connect), "Tu red", "Personas que quizás conozcas", the "Mi red" graph | ✅ |
-| Trust recommendations (`get_recommendations`, score 0–99 with reasons) | ✅ |
-| Intros via a mutual friend. WhatsApp is shared only after the mutual friend **and** the target accept | ✅ |
-| Resolve a request + thank-you note → exchange. Endorsements between friends | ✅ |
-| Profile, settings, language, dark mode, report, block, delete account, admin page (reports + pilot metrics) | ✅ |
-| Roadmap page, coming-soon dialogs, placeholder Terms/Privacy | ✅ |
-| In-app chat, email/push, groups, share to WhatsApp, ID verification, payments, registered-worker badge, invoices | 🟠 Próximamente (visible, never faked) |
+| Email magic link + Google sign-in, onboarding (name, city, neighbourhood, photo, skills, private WhatsApp, Terms and Privacy acceptance) | Available |
+| Live feed per city, composer ("Crear pedido"), category filters, search (requests + people) | Available |
+| "Ta, te ayudo" offers, with a notification to the author | Available |
+| Friend requests, invite links `/invite/:code` (auto-connect), "Tu red", "Personas que quizás conozcas", the "Mi red" graph | Available |
+| Trust recommendations (`get_recommendations`, score 0–99 with reasons) | Available |
+| Intros via a mutual friend. WhatsApp is shared only after the mutual friend **and** the target accept | Available |
+| Resolve a request + thank-you note → exchange. Endorsements between friends | Available |
+| Profile, settings, language, dark mode, report, block, delete account, admin page (reports + pilot metrics) | Available |
+| Roadmap page, coming-soon dialogs, placeholder Terms/Privacy | Available |
+| In-app chat, email/push, groups, share to WhatsApp, ID verification, payments, registered-worker badge, invoices | Próximamente (visible, never faked) |
 
 ## Run locally
 

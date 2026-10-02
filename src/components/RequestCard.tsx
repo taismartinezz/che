@@ -35,7 +35,6 @@ export default function RequestCard({ request, recCount, iOffered, onChanged }: 
   const author = request.author;
   const isMine = request.author_id === me.id;
   const offers = request.offers?.[0]?.count ?? 0;
-  const short = request.text.length < 85;
   const open = request.status === 'open';
 
   const toggleHelp = async () => {
@@ -108,37 +107,26 @@ export default function RequestCard({ request, recCount, iOffered, onChanged }: 
             <Link to={`/perfil/${request.author_id}`} className="font-semibold hover:underline">
               {author?.display_name ?? '—'}
             </Link>{' '}
-            <span className="text-ink-2">{t('feed.asked_for_help')}</span>
+            <span className="text-ink-2 font-normal">{t('feed.asked_for_help')}</span>
           </div>
-          <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1 mt-1 text-[13px] text-ink-2">
+          <div className="flex flex-wrap items-center gap-x-1.5 mt-0.5 text-[13px] text-ink-2">
             <CategoryTag id={request.category} />
             {request.neighbourhood && <span>· {request.neighbourhood}</span>}
             <Link to={`/pedido/${request.id}`} className="hover:underline">
               · {timeAgo(request.created_at, i18n.language)}
             </Link>
-            {request.is_example && (
-              <span className="tag bg-field text-ink-2" title={t('feed.example_note')}>
-                {t('feed.example')}
-              </span>
-            )}
-            {request.status === 'resolved' && <span className="tag-ok">{t('feed.resolved')}</span>}
-            {request.status === 'closed' && <span className="tag bg-field text-ink-2">{t('feed.closed')}</span>}
+            {request.is_example && <span title={t('feed.example_note')}>· {t('feed.example')}</span>}
+            {request.status === 'resolved' && <span className="text-success">· {t('feed.resolved')}</span>}
+            {request.status === 'closed' && <span>· {t('feed.closed')}</span>}
           </div>
         </div>
         <Menu items={menu} />
       </header>
 
-      <p className={`px-4 pt-3 pb-2 whitespace-pre-wrap break-words ${short ? 'text-2xl leading-snug' : 'text-[15px]'}`}>{request.text}</p>
+      <p className="px-4 pt-3 pb-1 whitespace-pre-wrap break-words text-base">{request.text}</p>
 
-      <div className="flex items-center justify-between px-4 py-2 text-[15px] text-ink-2">
-        <span className="flex items-center gap-1.5">
-          {offers > 0 && (
-            <span className="h-[18px] w-[18px] rounded-full bg-brand text-white flex items-center justify-center">
-              <Hand size={11} />
-            </span>
-          )}
-          {t('feed.offers_count', { count: offers })}
-        </span>
+      <div className="flex items-center justify-between px-4 py-2 text-sm text-ink-2">
+        <span>{t('feed.offers_count', { count: offers })}</span>
         {recCount !== undefined && !isSensitive(request.category) && (
           <button className="hover:underline" onClick={seeWho}>
             {t('feed.recommended_count', { count: recCount })}
@@ -149,33 +137,32 @@ export default function RequestCard({ request, recCount, iOffered, onChanged }: 
       <div className="mx-2 sm:mx-4 border-t border-divider flex py-1 gap-0.5 sm:gap-1">
         {isMine ? (
           <button
-            className="btn-ghost grow h-9 px-1 text-[14px] sm:text-[15px]"
+            className="btn-ghost grow h-9 px-1 text-sm font-medium"
             disabled={!open || request.is_example}
             onClick={() => setDialog('resolve')}
           >
-            <CheckCircle2 size={20} /> <span className="truncate">{t('feed.mark_resolved')}</span>
+            <CheckCircle2 size={18} /> <span className="truncate">{t('feed.mark_resolved')}</span>
           </button>
         ) : (
           <button
-            className={`btn-ghost grow h-9 px-1 text-[14px] sm:text-[15px] ${iOffered ? '!text-brand' : ''}`}
+            className={`btn-ghost grow h-9 px-1 text-sm font-medium ${iOffered ? '!text-brand' : ''}`}
             disabled={busy || (!open && !iOffered)}
             onClick={toggleHelp}
             aria-pressed={iOffered}
           >
-            <Hand size={20} fill={iOffered ? 'currentColor' : 'none'} />
+            <Hand size={18} />
             <span className="truncate">{iOffered ? t('feed.helping') : t('feed.help')}</span>
           </button>
         )}
-        <button className="btn-ghost grow h-9 px-1 text-[14px] sm:text-[15px]" onClick={seeWho}>
-          <Users size={20} /> <span className="truncate">{t('feed.who_do_you_know')}</span>
+        <button className="btn-ghost grow h-9 px-1 text-sm font-medium" onClick={seeWho}>
+          <Users size={18} /> <span className="truncate">{t('feed.who_do_you_know')}</span>
         </button>
         <button
-          className="btn-ghost relative grow h-9 px-1 text-[14px] sm:text-[15px] shrink-0"
+          className="btn-ghost relative grow h-9 px-1 text-sm font-medium shrink-0"
           onClick={() => showSoon('share')}
           aria-label={`${t('feed.share')} (${t('soon.tag')})`}
         >
-          <Share2 size={20} /> <span className="truncate hidden sm:inline">{t('feed.share')}</span>
-          <span className="absolute top-1.5 right-1.5 sm:static h-2 w-2 rounded-full bg-soon" aria-hidden />
+          <Share2 size={18} /> <span className="truncate hidden sm:inline">{t('feed.share')}</span>
         </button>
       </div>
 

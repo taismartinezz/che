@@ -53,7 +53,7 @@ body {
 
 @layer components {
   .card {
-    @apply bg-card rounded-card shadow-card;
+    @apply bg-card rounded-card border border-divider;
   }
   .btn {
     @apply inline-flex items-center justify-center gap-2 rounded-md px-3 h-9 text-[15px] font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand;
@@ -83,16 +83,16 @@ body {
     @apply block text-sm font-semibold text-ink mb-1;
   }
   .chip {
-    @apply inline-flex items-center gap-1 rounded-full px-3 h-8 text-sm font-semibold transition-colors whitespace-nowrap;
+    @apply inline-flex items-center rounded-full px-3 h-8 text-sm font-medium border transition-colors whitespace-nowrap;
   }
   .chip-off {
-    @apply chip bg-field text-ink hover:bg-divider;
+    @apply chip border-divider text-ink-2 hover:text-ink hover:bg-hover;
   }
   .chip-on {
-    @apply chip bg-brand-soft text-brand ring-1 ring-brand/30;
+    @apply chip border-brand bg-brand text-brand-on;
   }
   .tag {
-    @apply inline-flex items-center rounded px-1.5 py-0.5 text-xs font-semibold;
+    @apply inline-flex items-center rounded px-1.5 py-0.5 text-xs font-medium;
   }
   .tag-soon {
     @apply tag bg-soon-bg text-soon;
@@ -101,7 +101,7 @@ body {
     @apply tag bg-success/15 text-success;
   }
   .side-link {
-    @apply flex items-center gap-3 rounded-lg px-2 py-2 text-[15px] font-medium text-ink hover:bg-hover w-full text-left;
+    @apply flex items-center gap-3 rounded-lg px-2 py-2 text-[15px] text-ink hover:bg-hover w-full text-left;
   }
   .skeleton {
     @apply animate-pulse rounded bg-divider;
