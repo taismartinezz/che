@@ -9,6 +9,7 @@ export interface Profile {
   bio: string | null;
   skills: CategoryId[];
   verification_status: 'none' | 'pending' | 'verified';
+  background_checked: boolean;
   is_registered_worker: boolean;
   invite_code: string;
   onboarded: boolean;
@@ -27,6 +28,8 @@ export interface RequestRow {
   status: 'open' | 'resolved' | 'closed';
   is_example: boolean;
   created_at: string;
+  group_id: string | null;
+  group: { id: string; name: string } | null;
   author: MiniProfile | null;
   offers: { count: number }[];
 }
@@ -77,6 +80,38 @@ export interface NotificationRow {
   created_at: string;
 }
 
-export const REQUEST_COLUMNS = `id, author_id, category, text, city, neighbourhood, status, is_example, created_at,
+export const REQUEST_COLUMNS = `id, author_id, category, text, city, neighbourhood, status, is_example, created_at, group_id,
+  group:groups(id, name),
   author:profiles!requests_author_id_fkey(id, display_name, avatar_url, neighbourhood),
   offers(count)`;
+
+export interface Conversation {
+  other_id: string;
+  display_name: string;
+  avatar_url: string | null;
+  last_body: string;
+  last_at: string;
+  last_from_me: boolean;
+  unread: number;
+  can_reply: boolean;
+}
+
+export interface Message {
+  id: string;
+  sender_id: string;
+  recipient_id: string;
+  body: string;
+  read_at: string | null;
+  created_at: string;
+}
+
+export interface GroupRow {
+  id: string;
+  name: string;
+  neighbourhood: string | null;
+  description: string | null;
+  created_by: string | null;
+  member_count: number;
+  is_member: boolean;
+  friends_in_group: number;
+}

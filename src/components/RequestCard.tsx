@@ -13,7 +13,7 @@ import { useUI } from '../context/UIContext';
 import { useData } from '../context/DataContext';
 import { api } from '../lib/api';
 import { timeAgo } from '../lib/time';
-import { isSensitive } from '../lib/constants';
+import { shareLink, requestUrl } from '../lib/share';
 import type { RequestRow } from '../lib/types';
 
 interface Props {
@@ -26,7 +26,7 @@ interface Props {
 export default function RequestCard({ request, recCount, iOffered, onChanged }: Props) {
   const { t, i18n } = useTranslation();
   const { me } = useMe();
-  const { showSoon, toast, toastError } = useUI();
+  const { toast, toastError } = useUI();
   const { refreshNetwork } = useData();
   const navigate = useNavigate();
   const [dialog, setDialog] = useState<null | 'recs' | 'resolve' | 'report'>(null);
@@ -55,7 +55,7 @@ export default function RequestCard({ request, recCount, iOffered, onChanged }: 
     }
   };
 
-  const seeWho = () => (isSensitive(request.category) ? showSoon('verification') : setDialog('recs'));
+  const seeWho = () => setDialog('recs');
 
   const menu: MenuItem[] = [];
   if (!window.location.pathname.startsWith('/pedido/'))
@@ -112,6 +112,11 @@ export default function RequestCard({ request, recCount, iOffered, onChanged }: 
           <div className="flex flex-wrap items-center gap-x-1.5 mt-0.5 text-[13px] text-ink-2">
             <CategoryTag id={request.category} />
             {request.neighbourhood && <span>· {request.neighbourhood}</span>}
+            {request.group && (
+              <Link to={`/grupos/${request.group.id}`} className="hover:underline">
+                · {t('feed.in_group', { name: request.group.name })}
+              </Link>
+            )}
             <Link to={`/pedido/${request.id}`} className="hover:underline">
               · {timeAgo(request.created_at, i18n.language)}
             </Link>
@@ -127,7 +132,7 @@ export default function RequestCard({ request, recCount, iOffered, onChanged }: 
 
       <div className="flex items-center justify-between px-4 py-2 text-sm text-ink-2">
         <span>{t('feed.offers_count', { count: offers })}</span>
-        {recCount !== undefined && !isSensitive(request.category) && (
+        {recCount !== undefined && (
           <button className="hover:underline" onClick={seeWho}>
             {t('feed.recommended_count', { count: recCount })}
           </button>
@@ -159,8 +164,8 @@ export default function RequestCard({ request, recCount, iOffered, onChanged }: 
         </button>
         <button
           className="btn-ghost relative grow h-9 px-1 text-sm font-medium shrink-0"
-          onClick={() => showSoon('share')}
-          aria-label={`${t('feed.share')} (${t('soon.tag')})`}
+          onClick={() => shareLink(t('share.text', { text: request.text }), requestUrl(request.id))}
+          aria-label={t('feed.share')}
         >
           <Share2 size={18} /> <span className="truncate hidden sm:inline">{t('feed.share')}</span>
         </button>

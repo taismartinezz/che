@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Map as MapIcon, Settings, Shield, Users, UsersRound, Wallet } from 'lucide-react';
+import { Map as MapIcon, MessageCircle, Settings, Shield, Users, UsersRound, Wallet } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { useMe } from '../context/AuthContext';
 import { useUI } from '../context/UIContext';
@@ -40,7 +40,8 @@ export default function LeftSidebar() {
         <span className="truncate font-medium">{me.display_name}</span>
       </Link>
       <Item to="/red" icon={<Users size={20} />} label={t('nav.network')} />
-      <Item to="/grupos" icon={<UsersRound size={20} />} label={t('nav.groups')} soon="groups" />
+      <Item to="/grupos" icon={<UsersRound size={20} />} label={t('nav.groups')} />
+      <Item to="/chat" icon={<MessageCircle size={20} />} label={t('nav.chat')} />
       <Item to="/pagos" icon={<Wallet size={20} />} label={t('nav.payments')} soon="payments" />
       <Item to="/hoja-de-ruta" icon={<MapIcon size={20} />} label={t('nav.roadmap')} />
       <Item to="/ajustes" icon={<Settings size={20} />} label={t('nav.settings')} />

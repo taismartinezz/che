@@ -17,6 +17,8 @@ interface DataState {
   unread: number;
   refreshNotifications: () => Promise<void>;
   markAllRead: () => Promise<void>;
+  unreadMessages: number;
+  refreshMessages: () => Promise<void>;
 }
 
 const DataContext = createContext<DataState | null>(null);
@@ -29,6 +31,17 @@ export function DataProvider({ children }: { children: ReactNode }) {
   const [people, setPeople] = useState<Record<string, MiniProfile>>({});
   const [networkLoading, setNetworkLoading] = useState(true);
   const [notifications, setNotifications] = useState<NotificationRow[]>([]);
+  const [unreadMessages, setUnreadMessages] = useState(0);
+
+  const refreshMessages = useCallback(async () => {
+    if (!me) return;
+    const { count } = await supabase
+      .from('messages')
+      .select('id', { count: 'exact', head: true })
+      .eq('recipient_id', me)
+      .is('read_at', null);
+    setUnreadMessages(count ?? 0);
+  }, [me]);
 
   const refreshNetwork = useCallback(async () => {
     if (!me) return;
@@ -65,6 +78,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
     if (!me) return;
     refreshNetwork();
     refreshNotifications();
+    refreshMessages();
     const channel = supabase
       .channel(`notifications:${me}`)
       .on(
@@ -76,11 +90,16 @@ export function DataProvider({ children }: { children: ReactNode }) {
           if (['friend_request', 'friend_accepted', 'invite_joined'].includes(type)) refreshNetwork();
         },
       )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'messages', filter: `recipient_id=eq.${me}` },
+        () => refreshMessages(),
+      )
       .subscribe();
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [me, refreshNetwork, refreshNotifications]);
+  }, [me, refreshNetwork, refreshNotifications, refreshMessages]);
 
   const markAllRead = useCallback(async () => {
     if (!me) return;
@@ -113,8 +132,10 @@ export function DataProvider({ children }: { children: ReactNode }) {
       unread: notifications.filter((n) => !n.read_at).length,
       refreshNotifications,
       markAllRead,
+      unreadMessages,
+      refreshMessages,
     };
-  }, [connections, people, networkLoading, refreshNetwork, notifications, refreshNotifications, markAllRead, me]);
+  }, [connections, people, networkLoading, refreshNetwork, notifications, refreshNotifications, markAllRead, me, unreadMessages, refreshMessages]);
 
   return <DataContext.Provider value={value}>{children}</DataContext.Provider>;
 }

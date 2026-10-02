@@ -4,6 +4,8 @@ import Layout from '../components/Layout';
 import ProfileForm from '../components/ProfileForm';
 import Avatar from '../components/Avatar';
 import InviteLink from '../components/InviteLink';
+import NotificationSettings from '../components/NotificationSettings';
+import VerificationSettings from '../components/VerificationSettings';
 import { Switch } from '../components/TopBar';
 import { useAuth, useMe } from '../context/AuthContext';
 import { useData } from '../context/DataContext';
@@ -76,6 +78,9 @@ export default function Settings() {
             }}
           />
         </section>
+
+        <VerificationSettings />
+        <NotificationSettings />
 
         <section className="card p-4 space-y-2">
           <h2 className="font-semibold mb-2">{t('settings.preferences')}</h2>

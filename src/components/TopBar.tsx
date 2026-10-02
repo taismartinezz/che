@@ -29,8 +29,8 @@ import NotificationList from './NotificationList';
 export const TABS = [
   { to: '/', icon: Home, key: 'nav.home', end: true },
   { to: '/red', icon: Users, key: 'nav.network' },
-  { to: '/grupos', icon: UsersRound, key: 'nav.groups', soon: true },
-  { to: '/pagos', icon: Wallet, key: 'nav.payments', soon: true },
+  { to: '/grupos', icon: UsersRound, key: 'nav.groups' },
+  { to: '/pagos', icon: Wallet, key: 'nav.payments' },
   { to: '/hoja-de-ruta', icon: MapIcon, key: 'nav.roadmap' },
 ];
 
@@ -90,8 +90,8 @@ export default function TopBar() {
   const { t, i18n } = useTranslation();
   const { me, priv } = useMe();
   const { signOut } = useAuth();
-  const { dark, toggleDark, viewCity, setViewCity, showSoon } = useUI();
-  const { unread, markAllRead } = useData();
+  const { dark, toggleDark, viewCity, setViewCity } = useUI();
+  const { unread, markAllRead, unreadMessages } = useData();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -187,9 +187,14 @@ export default function TopBar() {
           >
             {i18n.language === 'es' ? 'ES' : 'EN'}
           </button>
-          <button className="icon-btn h-9 w-9 sm:h-10 sm:w-10 relative" onClick={() => showSoon('chat')} title={t('nav.chat')} aria-label={t('nav.chat')}>
+          <Link to="/chat" className="icon-btn h-9 w-9 sm:h-10 sm:w-10 relative" title={t('nav.chat')} aria-label={t('nav.chat')}>
             <MessageCircle size={19} />
-          </button>
+            {unreadMessages > 0 && (
+              <span className="absolute -top-1 -right-1 min-w-[19px] h-[19px] px-1 rounded-full bg-danger text-white text-[11px] font-bold flex items-center justify-center">
+                {unreadMessages > 9 ? '9+' : unreadMessages}
+              </span>
+            )}
+          </Link>
           <div className="relative">
             <button
               className={`icon-btn h-9 w-9 sm:h-10 sm:w-10 relative ${openMenu === 'notif' ? 'bg-brand-soft text-brand' : ''}`}

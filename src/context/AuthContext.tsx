@@ -7,7 +7,11 @@ import type { Profile } from '../lib/types';
 interface PrivateData {
   contact_whatsapp: string | null;
   is_admin: boolean;
+  email_notifications: boolean;
+  push_notifications: boolean;
 }
+
+const NO_PRIV: PrivateData = { contact_whatsapp: null, is_admin: false, email_notifications: true, push_notifications: true };
 
 interface AuthState {
   session: Session | null;
@@ -23,13 +27,13 @@ const AuthContext = createContext<AuthState | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [priv, setPriv] = useState<PrivateData>({ contact_whatsapp: null, is_admin: false });
+  const [priv, setPriv] = useState<PrivateData>(NO_PRIV);
   const [loading, setLoading] = useState(true);
 
   const loadProfile = useCallback(async (uid: string | undefined) => {
     if (!uid) {
       setProfile(null);
-      setPriv({ contact_whatsapp: null, is_admin: false });
+      setPriv(NO_PRIV);
       return;
     }
     const [{ data: p }, { data: pr }] = await Promise.all([
@@ -38,7 +42,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     ]);
     setProfile((p as Profile | null) ?? null);
     const row = Array.isArray(pr) ? pr[0] : pr;
-    setPriv({ contact_whatsapp: row?.contact_whatsapp ?? null, is_admin: Boolean(row?.is_admin) });
+    setPriv({
+      contact_whatsapp: row?.contact_whatsapp ?? null,
+      is_admin: Boolean(row?.is_admin),
+      email_notifications: row?.email_notifications ?? true,
+      push_notifications: row?.push_notifications ?? true,
+    });
   }, []);
 
   useEffect(() => {

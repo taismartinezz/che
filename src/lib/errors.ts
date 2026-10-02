@@ -11,6 +11,7 @@ const KNOWN = [
   'request_not_open',
   'forbidden',
   'not_authenticated',
+  'invalid',
 ];
 
 /** Turns Supabase/Postgres errors into plain-language messages. */

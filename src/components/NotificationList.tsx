@@ -25,6 +25,9 @@ const KNOWN = [
   'intro_declined',
   'exchange',
   'endorsement',
+  'message',
+  'verification_approved',
+  'verification_rejected',
 ];
 
 export default function NotificationList({ limit, onNavigate }: { limit?: number; onNavigate?: () => void }) {
@@ -78,6 +81,8 @@ export default function NotificationList({ limit, onNavigate }: { limit?: number
     onNavigate?.();
     if (['friend_request', 'friend_accepted', 'invite_joined'].includes(n.type) && p.from_id) navigate(`/perfil/${p.from_id}`);
     else if (n.type === 'endorsement' && profile) navigate(`/perfil/${profile.id}`);
+    else if (n.type === 'message' && p.from_id) navigate(`/chat/${p.from_id}`);
+    else if (n.type.startsWith('verification_')) navigate('/ajustes#verificacion');
     else if (p.request_id) navigate(`/pedido/${p.request_id}`);
   };
 
@@ -91,7 +96,7 @@ export default function NotificationList({ limit, onNavigate }: { limit?: number
         const intro = p.intro_id ? intros[p.intro_id] : undefined;
         let key = KNOWN.includes(n.type) ? n.type : 'unknown';
         if (n.type === 'intro_target' && p.via_name) key = 'intro_target_via';
-        const values = { ...p, category: p.category ? t(`categories.${p.category}`) : '' };
+        const values = { ...p, category: p.category ? t(`categories.${p.category}`) : '', note: p.note ?? '' };
         const viaFirst = key === 'intro_target_via' || n.type === 'intro_via_accepted';
         const actor = (viaFirst ? p.via_name : p.from_name) ?? p.from_name ?? p.via_name ?? p.other_name ?? p.target_name ?? '';
         const actorId = (viaFirst ? p.via_id : p.from_id) ?? p.from_id ?? p.via_id ?? p.other_id ?? p.target_id ?? '';

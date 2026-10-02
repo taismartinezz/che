@@ -7,7 +7,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.svg', 'apple-touch-icon.png'],
+      includeAssets: ['favicon.svg', 'apple-touch-icon.png', 'push-sw.js'],
       manifest: {
         name: 'Che, ¿conocés?',
         short_name: 'Che',
@@ -26,6 +26,8 @@ export default defineConfig({
         ],
       },
       workbox: {
+        // Web push handlers live in public/push-sw.js.
+        importScripts: ['push-sw.js'],
         navigateFallback: '/index.html',
         // Never cache Supabase API traffic: data must always be live.
         navigateFallbackDenylist: [/^\/auth/],

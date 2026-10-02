@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { MapPin, ShieldAlert } from 'lucide-react';
 import Modal from './Modal';
@@ -9,7 +9,14 @@ import { useUI } from '../context/UIContext';
 import { supabase } from '../lib/supabase';
 import { MAX_REQUEST_LENGTH, isSensitive, type CategoryId } from '../lib/constants';
 
-export default function CreateRequestDialog({ open, onClose, onCreated }: { open: boolean; onClose: () => void; onCreated?: () => void }) {
+interface Props {
+  open: boolean;
+  onClose: () => void;
+  onCreated?: () => void;
+  groupId?: string;
+}
+
+export default function CreateRequestDialog({ open, onClose, onCreated, groupId }: Props) {
   const { t } = useTranslation();
   const { me } = useMe();
   const { toast, toastError } = useUI();
@@ -18,6 +25,16 @@ export default function CreateRequestDialog({ open, onClose, onCreated }: { open
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const firstName = me.display_name.split(' ')[0];
+  const [myGroups, setMyGroups] = useState<{ id: string; name: string }[]>([]);
+  const [target, setTarget] = useState<string>(groupId ?? '');
+
+  useEffect(() => {
+    if (!open) return;
+    setTarget(groupId ?? '');
+    supabase.rpc('get_groups', { p_city: me.city }).then(({ data }) =>
+      setMyGroups(((data ?? []) as { id: string; name: string; is_member: boolean }[]).filter((g) => g.is_member)),
+    );
+  }, [open, groupId, me.city]);
 
   const publish = async () => {
     if (!text.trim()) return setError(t('create.empty_text'));
@@ -30,6 +47,7 @@ export default function CreateRequestDialog({ open, onClose, onCreated }: { open
       text: text.trim(),
       city: me.city,
       neighbourhood: me.neighbourhood,
+      group_id: target || null,
     });
     setBusy(false);
     if (err) return toastError(err);
@@ -57,7 +75,7 @@ export default function CreateRequestDialog({ open, onClose, onCreated }: { open
         </>
       }
     >
-      <div className="flex items-center gap-2 mb-3">
+      <div className="flex flex-wrap items-center gap-2 mb-3">
         <Avatar id={me.id} name={me.display_name} url={me.avatar_url} size={40} />
         <div>
           <div className="font-semibold">{me.display_name}</div>
@@ -65,6 +83,17 @@ export default function CreateRequestDialog({ open, onClose, onCreated }: { open
             <MapPin size={12} /> {me.neighbourhood}, {t(`cities.${me.city}`)}
           </div>
         </div>
+        {myGroups.length > 0 && (
+          <label className="ml-auto text-sm text-ink-2 flex items-center gap-2">
+            {t('groups.post_in')}
+            <select className="input h-8 py-0 w-auto text-sm" value={target} onChange={(e) => setTarget(e.target.value)}>
+              <option value="">{t('groups.whole_city', { city: t(`cities.${me.city}`) })}</option>
+              {myGroups.map((g) => (
+                <option key={g.id} value={g.id}>{g.name}</option>
+              ))}
+            </select>
+          </label>
+        )}
       </div>
       <textarea
         autoFocus

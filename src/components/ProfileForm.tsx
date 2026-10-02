@@ -144,7 +144,7 @@ export default function ProfileForm({ profile, whatsapp, submitLabel, requireTer
         <span className="label">{t('onboarding.skills')}</span>
         <p className="text-xs text-ink-2 mb-2">{t('onboarding.skills_hint')}</p>
         <CategoryChips multiple value={skills} onChange={setSkills} />
-        {skills.includes('cuidado') && (
+        {skills.includes('cuidado') && !(profile.verification_status === 'verified' && profile.background_checked) && (
           <p className="mt-2 flex gap-2 text-sm rounded-lg bg-soon-bg text-soon p-2">
             <ShieldAlert size={18} className="shrink-0" /> {t('onboarding.cuidado_hint')}
           </p>

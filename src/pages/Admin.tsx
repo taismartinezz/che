@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Layout from '../components/Layout';
 import { EmptyState, RowSkeleton } from '../components/States';
+import AdminVerifications from '../components/AdminVerifications';
 import { useMe } from '../context/AuthContext';
 import { useUI } from '../context/UIContext';
 import { supabase } from '../lib/supabase';
@@ -17,6 +18,13 @@ interface Report {
   target_label: string | null;
   reason: string;
   created_at: string;
+}
+interface LaunchMetrics {
+  messages_sent: number;
+  active_chats: number;
+  groups_count: number;
+  verified_users: number;
+  pending_verifications: number;
 }
 interface Metrics {
   requests_posted: number;
@@ -34,9 +42,15 @@ export default function Admin() {
   const { toastError } = useUI();
   const [reports, setReports] = useState<Report[] | null>(null);
   const [metrics, setMetrics] = useState<Metrics | null>(null);
+  const [launch, setLaunch] = useState<LaunchMetrics | null>(null);
 
   const load = useCallback(async () => {
-    const [{ data: r, error }, { data: m }] = await Promise.all([supabase.rpc('admin_list_reports'), supabase.rpc('admin_metrics')]);
+    const [{ data: r, error }, { data: m }, { data: l }] = await Promise.all([
+      supabase.rpc('admin_list_reports'),
+      supabase.rpc('admin_metrics'),
+      supabase.rpc('admin_launch_metrics'),
+    ]);
+    setLaunch(((Array.isArray(l) ? l[0] : l) as LaunchMetrics) ?? null);
     if (error) toastError(error);
     setReports((r ?? []) as Report[]);
     setMetrics(((Array.isArray(m) ? m[0] : m) as Metrics) ?? null);
@@ -66,6 +80,14 @@ export default function Admin() {
         [t('admin.m_intros'), metrics.intros_accepted, t('admin.of', { count: metrics.intros_requested })],
         [t('admin.m_exchanges'), metrics.exchanges_completed],
         [t('admin.m_wau'), metrics.weekly_active_users, t('admin.of', { count: metrics.total_users })],
+        ...(launch
+          ? ([
+              [t('admin.m_messages'), launch.messages_sent],
+              [t('admin.m_chats'), launch.active_chats],
+              [t('admin.m_groups'), launch.groups_count],
+              [t('admin.m_verified'), launch.verified_users],
+            ] as [string, number][])
+          : []),
       ]
     : [];
 
@@ -77,7 +99,7 @@ export default function Admin() {
         {!metrics ? (
           <RowSkeleton rows={2} />
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             {tiles.map(([label, value, sub]) => (
               <div key={label} className="rounded-lg bg-field p-3">
                 <div className="text-2xl font-bold text-brand tabular-nums">{value}</div>
@@ -88,6 +110,8 @@ export default function Admin() {
           </div>
         )}
       </section>
+
+      <AdminVerifications />
 
       <section className="card p-4">
         <h2 className="font-semibold mb-3">{t('admin.reports')}</h2>

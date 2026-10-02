@@ -32,26 +32,16 @@ export const MAX_REQUEST_LENGTH = 280;
 
 /** Columns of `profiles` that signed-in users may read (contact_whatsapp is never one of them). */
 export const PROFILE_COLUMNS =
-  'id, display_name, avatar_url, city, neighbourhood, bio, skills, verification_status, is_registered_worker, invite_code, onboarded, created_at';
+  'id, display_name, avatar_url, city, neighbourhood, bio, skills, verification_status, background_checked, is_registered_worker, invite_code, onboarded, created_at';
 export const PROFILE_MINI = 'id, display_name, avatar_url, neighbourhood';
 
 /** Features that are visible but not built yet. Each opens the coming-soon dialog. */
 export type SoonFeature =
-  | 'chat'
-  | 'notifications'
-  | 'groups'
-  | 'share'
-  | 'verification'
   | 'payments'
   | 'registered_worker'
   | 'invoices';
 
 export const SOON_STAGE: Record<SoonFeature, 'mvp' | 'stage2' | 'stage3'> = {
-  chat: 'mvp',
-  notifications: 'mvp',
-  groups: 'mvp',
-  share: 'mvp',
-  verification: 'mvp',
   payments: 'stage2',
   registered_worker: 'stage2',
   invoices: 'stage3',

@@ -148,9 +148,10 @@ export default function Profile() {
                 .join(' · ')}
             </div>
             <div className="text-xs text-ink-2 mt-2 flex flex-wrap gap-x-3">
-              <button className="hover:underline" onClick={() => showSoon('verification')}>
-                {t('profile.verified_badge')} ({t('soon.tag').toLowerCase()})
-              </button>
+              {person.verification_status === 'verified' && (
+                <span className="text-success font-medium">{t('verify.badge')}</span>
+              )}
+              {person.background_checked && <span className="text-success font-medium">{t('verify.background_badge')}</span>}
               <button className="hover:underline" onClick={() => showSoon('registered_worker')}>
                 {t('profile.worker_badge')} ({t('soon.tag').toLowerCase()})
               </button>
@@ -165,8 +166,11 @@ export default function Profile() {
               <>
                 {fs.state === 'friends' && (
                   <>
-                    <button className="btn-primary" onClick={() => openWhatsApp(person.id, person.display_name)}>
-                      {t('profile.write')}
+                    <Link className="btn-primary" to={`/chat/${person.id}`}>
+                      {t('nav.chat')}
+                    </Link>
+                    <button className="btn-secondary" onClick={() => openWhatsApp(person.id, person.display_name)}>
+                      WhatsApp
                     </button>
                     <button className="btn-secondary" onClick={() => setDialog('endorse')}>
                       {t('profile.endorse')}

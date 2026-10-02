@@ -3,8 +3,8 @@ import Layout from '../components/Layout';
 import { SOON_STAGE, type SoonFeature } from '../lib/constants';
 import { useUI } from '../context/UIContext';
 
-const TODAY = ['requests', 'offers', 'network', 'recs', 'intros', 'exchanges', 'safety', 'lang'];
-const COMING: SoonFeature[] = ['chat', 'notifications', 'groups', 'share', 'verification', 'payments', 'registered_worker', 'invoices'];
+const TODAY = ['requests', 'offers', 'network', 'recs', 'intros', 'exchanges', 'chat', 'groups', 'share', 'notifications', 'verification', 'safety', 'lang'];
+const COMING: SoonFeature[] = ['payments', 'registered_worker', 'invoices'];
 
 export default function Roadmap() {
   const { t } = useTranslation();

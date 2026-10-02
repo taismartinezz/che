@@ -114,6 +114,7 @@ export default function RecommendationsDialog({ request, open, onClose }: { requ
       ) : recs.length === 0 ? (
         <div className="text-center py-6 space-y-3">
           <p className="font-semibold">{t('recs.empty')}</p>
+          {request.category === 'cuidado' && <p className="text-sm text-ink-2">{t('create.sensitive_note')}</p>}
           <p className="text-sm text-ink-2">{t('recs.empty_hint')}</p>
           <div className="max-w-xs mx-auto">
             <InviteLink compact />
@@ -132,7 +133,10 @@ export default function RecommendationsDialog({ request, open, onClose }: { requ
                     <Link to={`/perfil/${r.user_id}`} className="font-semibold hover:underline">
                       {r.display_name}
                     </Link>
-                    <div className="text-sm text-ink-2">{r.neighbourhood}</div>
+                    <div className="text-sm text-ink-2">
+                      {r.neighbourhood}
+                      {r.is_verified && <span className="text-success"> · {t('verify.badge')}</span>}
+                    </div>
                     <div className="text-sm text-ink-2 mt-1 flex flex-wrap gap-x-1">
                       {r.reasons.map((reason, i) => (
                         <span key={reason}>
@@ -172,9 +176,11 @@ export default function RecommendationsDialog({ request, open, onClose }: { requ
                       {r.via_name ? t('recs.ask_intro_via', { name: r.via_name.split(' ')[0] }) : t('recs.ask_contact')}
                     </button>
                   ) : null}
-                  <button className="btn-ghost h-8 text-sm" onClick={() => showSoon('chat')}>
-                    {t('recs.chat')}
-                  </button>
+                  {(isFriend || (intro && intro.status === 'accepted' && intro.target_status === 'accepted')) && (
+                    <Link className="btn-secondary h-8 text-sm" to={`/chat/${r.user_id}`}>
+                      {t('recs.chat')}
+                    </Link>
+                  )}
                   <button className="btn-ghost h-8 text-sm" onClick={() => showSoon('payments')}>
                     {t('recs.pay')}
                   </button>

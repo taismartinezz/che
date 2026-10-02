@@ -17,9 +17,13 @@ Che only connects people. It never sets prices, assigns jobs or employs anyone. 
 | Trust recommendations (`get_recommendations`, score 0–99 with reasons) | Available |
 | Intros via a mutual friend. WhatsApp is shared only after the mutual friend **and** the target accept | Available |
 | Resolve a request + thank-you note → exchange. Endorsements between friends | Available |
-| Profile, settings, language, dark mode, report, block, delete account, admin page (reports + pilot metrics) | Available |
-| Roadmap page, coming-soon dialogs, placeholder Terms/Privacy | Available |
-| In-app chat, email/push, groups, share to WhatsApp, ID verification, payments, registered-worker badge, invoices | Próximamente (visible, never faked) |
+| **In-app chat** between friends or people with an accepted intro (live, unread badges) | Available |
+| **Neighbourhood groups**: create, join, leave, post requests into a group (shared groups add +8 trust) | Available |
+| **Share to WhatsApp** (native share sheet on phones, wa.me link on desktop) for requests and invite links | Available |
+| **Email + push notifications** via the `notify` Edge Function, with per-user on/off switches | Available once configured (see below) |
+| **ID verification + background checks**: private upload, manual admin review, files deleted after the decision. Cuidado only recommends verified people with a reviewed background check | Available |
+| Profile, settings, language, dark mode, report, block, delete account, admin page (reports, verifications, pilot metrics) | Available |
+| Payments (Mercado Pago), registered-worker badge, automatic invoices | Próximamente (stages 2–3) |
 
 ## Run locally
 
@@ -43,6 +47,26 @@ Without the env vars, the app shows a setup screen.
    update public.profiles set is_admin = true where id = (select id from auth.users where email = 'you@example.com');
    ```
 
+### Launch features: what to configure
+
+1. Run `supabase/migrations/20261003000000_launch_features.sql` after the first migration. It adds chat, groups, push subscriptions and verification, and creates the private `verification` storage bucket.
+2. **Email + push notifications.** These are sent by the Edge Function in `supabase/functions/notify`.
+   1. Generate VAPID keys once with `npx web-push generate-vapid-keys`.
+   2. Set the secrets and deploy:
+      ```bash
+      supabase secrets set WEBHOOK_SECRET=<random string> \
+        RESEND_API_KEY=<from resend.com> EMAIL_FROM="Che <avisos@checonoces.com>" \
+        VAPID_PUBLIC_KEY=<public> VAPID_PRIVATE_KEY=<private> VAPID_SUBJECT=mailto:hola@checonoces.com \
+        APP_URL=https://checonoces.com
+      supabase functions deploy notify --no-verify-jwt
+      ```
+   3. Go to **Database → Webhooks** and create a webhook on `public.notifications`, event `INSERT`. Use the type "Supabase Edge Function" → `notify`, and add the HTTP header `x-webhook-secret: <WEBHOOK_SECRET>`.
+   4. Add `VITE_VAPID_PUBLIC_KEY=<public>` to the web app's environment.
+   5. In Resend, verify the `checonoces.com` domain so emails don't land in spam.
+
+   Either channel is skipped when its keys are missing. Users turn each one on or off in Configuración → Avisos. Chat messages create at most one notification per sender until it is read, so a conversation doesn't flood the user's inbox or phone.
+3. **Verification.** Admins see pending requests in `/admin`. They open each document through a 2-minute signed link, tick "Antecedentes revisados" when the certificate is clear, and approve or reject. The documents are deleted right after the decision. Accepted background certificates are the Policía Nacional one (Uruguay) and the Registro Nacional de Reincidencia one (Argentina).
+
 ### Seed data (testing only)
 
 `supabase/seed/seed.sql` adds 7 fictional people per city with skills, friendships, a group, past exchanges and endorsements. It also adds 3 example requests per city (`is_example = true`, shown with an "Ejemplo" tag). Every seed account uses an `@seed.checonoces.test` email and cannot log in.
@@ -57,7 +81,9 @@ To see trust scores change, open an invite link to a seed person after you sign 
 - Users can't change `is_admin`, `verification_status`, `is_registered_worker` or `invite_code` (column-level grants).
 - A profile can't be marked onboarded without `terms_accepted_at` (check constraint).
 - Blocks are applied in RLS (feed, profiles) and in the recommendation function, in both directions.
-- `cuidado` (babysitting and care): the recommendation function and `request_intro` only allow `verification_status = 'verified'` providers. The UI shows the coming-soon verification dialog instead of a list.
+- `cuidado` (babysitting and care): the recommendation function and `request_intro` only allow providers with `verification_status = 'verified'` **and** `background_checked`. Only an admin can set either field, through `admin_review_verification`.
+- Chat: `messages` can only be inserted when `can_contact()` is true, i.e. the two people are friends or their intro was accepted by everyone involved, and neither has blocked the other.
+- Verification documents live in a private bucket. Only the owner and admins can read them, and they are deleted after review.
 - `delete_my_account()` deletes the auth user, and every row cascades. The client first removes the user's avatar files.
 
 ## Trust score
@@ -83,7 +109,8 @@ src/
   i18n/         es.ts (default) and en.ts. All UI text lives here.
   lib/          supabase client, api wrappers, constants (cities, neighbourhoods, categories), errors
 supabase/
-  migrations/   schema, RLS, RPCs
+  migrations/   schema, RLS, RPCs (+ launch features)
+  functions/    notify: email (Resend) + web push delivery
   seed/         seed.sql and remove_seed.sql
 ```
 
@@ -97,6 +124,7 @@ supabase/
 ## Before real users (Part 4)
 
 - [ ] A lawyer in each country reviews the Terms, the Privacy Policy and the stored data (Uruguay: Ley 18.331; Argentina: Ley 25.326). The current texts in `src/pages/Legal.tsx` are placeholders.
-- [ ] Keep `cuidado` closed to unverified providers.
+- [ ] Keep `cuidado` closed to unverified providers. Have the lawyers confirm that storing ID images and criminal-record certificates temporarily, for manual review, is allowed and correctly disclosed.
+- [ ] Configure Resend (verified domain), VAPID keys and the database webhook (see "Launch features").
 - [ ] Run `remove_seed.sql`.
 - [ ] Start the pilot in one neighbourhood per city.
