@@ -86,7 +86,7 @@ export default function CreateRequestDialog({ open, onClose, onCreated, groupId 
         {myGroups.length > 0 && (
           <label className="ml-auto text-sm text-ink-2 flex items-center gap-2">
             {t('groups.post_in')}
-            <select className="input h-8 py-0 w-auto text-sm" value={target} onChange={(e) => setTarget(e.target.value)}>
+            <select className="input h-8 py-0 w-auto max-w-[180px] text-sm" value={target} onChange={(e) => setTarget(e.target.value)}>
               <option value="">{t('groups.whole_city', { city: t(`cities.${me.city}`) })}</option>
               {myGroups.map((g) => (
                 <option key={g.id} value={g.id}>{g.name}</option>

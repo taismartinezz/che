@@ -41,7 +41,7 @@ export default function Modal({ open, onClose, title, children, footer, wide }: 
         tabIndex={-1}
         role="dialog"
         aria-modal="true"
-        className={`card shadow-pop w-full ${wide ? 'sm:max-w-[620px]' : 'sm:max-w-[500px]'} max-h-[92vh] flex flex-col rounded-b-none sm:rounded-b-card outline-none`}
+        className={`card shadow-pop w-full ${wide ? 'sm:max-w-[620px]' : 'sm:max-w-[500px]'} max-h-[92dvh] flex flex-col rounded-b-none sm:rounded-b-card outline-none`}
       >
         <div className="relative flex items-center justify-center h-[60px] border-b border-divider px-14 shrink-0">
           <h2 className="text-lg sm:text-xl font-bold text-center leading-tight line-clamp-2">{title}</h2>

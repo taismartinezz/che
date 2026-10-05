@@ -31,6 +31,7 @@ const es = {
     privacy: 'Privacidad',
     back_home: 'Volver al inicio',
   },
+  nav_short: { home: 'Inicio', network: 'Red', groups: 'Grupos', payments: 'Pagos', roadmap: 'Ruta' },
   cities: { mvd: 'Montevideo', bue: 'Buenos Aires' },
   categories: {
     all: 'Todo',

@@ -28,18 +28,20 @@ import { setLanguage } from '../i18n';
 import NotificationList from './NotificationList';
 
 export const TABS = [
-  { to: '/', icon: Home, key: 'nav.home', end: true },
-  { to: '/red', icon: Users, key: 'nav.network' },
-  { to: '/grupos', icon: UsersRound, key: 'nav.groups' },
-  { to: '/pagos', icon: Wallet, key: 'nav.payments' },
-  { to: '/hoja-de-ruta', icon: MapIcon, key: 'nav.roadmap' },
+  { to: '/', icon: Home, key: 'nav.home', short: 'nav_short.home', end: true },
+  { to: '/red', icon: Users, key: 'nav.network', short: 'nav_short.network' },
+  { to: '/grupos', icon: UsersRound, key: 'nav.groups', short: 'nav_short.groups' },
+  { to: '/pagos', icon: Wallet, key: 'nav.payments', short: 'nav_short.payments' },
+  { to: '/hoja-de-ruta', icon: MapIcon, key: 'nav.roadmap', short: 'nav_short.roadmap' },
 ];
 
 function Logo() {
+  const { t } = useTranslation();
   return (
     <Link
       to="/"
       aria-label="Che, ¿conocés?"
+      title={t('nav.home')}
       className="h-10 w-10 rounded-full bg-brand-fill text-white flex items-center justify-center font-extrabold text-[15px] tracking-tight shrink-0 hover:bg-brand-fill-hover"
     >
       che
@@ -66,7 +68,7 @@ function TabLink({ tab, compact }: { tab: (typeof TABS)[number]; compact?: boole
       title={t(tab.key)}
       aria-label={t(tab.key)}
       className={({ isActive }) =>
-        `relative flex-1 flex items-center justify-center ${compact ? 'h-12' : 'h-14 max-w-[112px]'} group ${
+        `relative flex-1 min-w-0 flex items-center justify-center ${compact ? 'h-14' : 'h-14 max-w-[112px]'} group ${
           isActive ? 'text-brand' : 'text-ink-2'
         }`
       }
@@ -74,11 +76,13 @@ function TabLink({ tab, compact }: { tab: (typeof TABS)[number]; compact?: boole
       {({ isActive }) => (
         <>
           <span
-            className={`flex items-center justify-center w-full ${compact ? 'h-10' : 'h-12'} mx-1 rounded-lg ${
+            className={`flex flex-col items-center justify-center w-full ${compact ? 'h-12 gap-0.5' : 'h-12'} mx-1 rounded-lg ${
               isActive ? '' : 'group-hover:bg-hover'
             }`}
           >
-            <Icon size={compact ? 22 : 24} strokeWidth={isActive ? 2.2 : 1.8} />
+            <Icon size={compact ? 20 : 24} strokeWidth={isActive ? 2.2 : 1.8} aria-hidden />
+            {/* Phones: short visible label under the icon. */}
+            {compact && <span className="text-[11px] leading-none font-medium truncate max-w-full px-0.5">{t(tab.short)}</span>}
           </span>
           {isActive && <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-brand rounded-t" />}
         </>
@@ -97,6 +101,8 @@ export default function TopBar() {
   const location = useLocation();
 
   const [openMenu, setOpenMenu] = useState<null | 'city' | 'notif' | 'account'>(null);
+  const cityLabel = `${t('nav.city')}: ${t(`cities.${viewCity}`)}`;
+  const langLabel = `${t('nav.language')}: ${i18n.language === 'es' ? 'Español' : 'English'}`;
   const [mobileSearch, setMobileSearch] = useState(false);
   const [q, setQ] = useState(() => new URLSearchParams(location.search).get('q') ?? '');
   const rightRef = useRef<HTMLDivElement>(null);
@@ -133,7 +139,7 @@ export default function TopBar() {
         {/* Left: logo + search */}
         {mobileSearch ? (
           <div className="flex items-center gap-2 w-full xl3:hidden">
-            <button className="icon-btn bg-transparent" onClick={() => setMobileSearch(false)} aria-label={t('common.close')}>
+            <button className="icon-btn bg-transparent" onClick={() => setMobileSearch(false)} aria-label={t('common.close')} title={t('common.close')}>
               <ArrowLeft size={20} />
             </button>
             {searchInput(true)}
@@ -142,7 +148,7 @@ export default function TopBar() {
         <div className={`flex items-center gap-2 shrink-0 wide:w-[280px] xl3:w-[320px] ${mobileSearch ? 'hidden xl3:flex' : ''}`}>
           <Logo />
           <div className="hidden xl3:block w-[240px]">{searchInput()}</div>
-          <button className="icon-btn xl3:hidden" onClick={() => setMobileSearch(true)} aria-label={t('nav.search')}>
+          <button className="icon-btn xl3:hidden" onClick={() => setMobileSearch(true)} aria-label={t('nav.search')} title={t('nav.search')}>
             <Search size={20} />
           </button>
         </div>
@@ -160,7 +166,7 @@ export default function TopBar() {
           className={`ml-auto flex items-center gap-1.5 sm:gap-2 justify-end wide:w-[280px] xl3:w-[320px] ${mobileSearch ? 'hidden xl3:flex' : ''}`}
         >
           <div className="relative">
-            <button className="icon-btn h-9 w-9 sm:h-10 sm:w-10" onClick={() => toggle('city')} title={t('nav.city')} aria-label={t('nav.city')}>
+            <button className="icon-btn h-9 w-9 sm:h-10 sm:w-10" onClick={() => toggle('city')} title={cityLabel} aria-label={cityLabel} aria-expanded={openMenu === 'city'}>
               <MapPin size={19} />
             </button>
             <Popover open={openMenu === 'city'} className="sm:w-64">
@@ -183,12 +189,12 @@ export default function TopBar() {
           <button
             className="icon-btn h-9 w-9 sm:h-10 sm:w-10 text-[13px] font-bold"
             onClick={() => setLanguage(i18n.language === 'es' ? 'en' : 'es')}
-            title={t('nav.language')}
-            aria-label={t('nav.language')}
+            title={langLabel}
+            aria-label={langLabel}
           >
             {i18n.language === 'es' ? 'ES' : 'EN'}
           </button>
-          <Link to="/chat" className="icon-btn h-9 w-9 sm:h-10 sm:w-10 relative" title={t('nav.chat')} aria-label={t('nav.chat')}>
+          <Link to="/chat" className="icon-btn h-9 w-9 sm:h-10 sm:w-10 relative" title={t('nav.chat')} aria-label={unreadMessages ? `${t('nav.chat')} (${unreadMessages})` : t('nav.chat')}>
             <MessageCircle size={19} />
             {unreadMessages > 0 && (
               <span className="absolute -top-1 -right-1 min-w-[19px] h-[19px] px-1 rounded-full bg-danger text-white text-[11px] font-bold flex items-center justify-center">
@@ -201,7 +207,8 @@ export default function TopBar() {
               className={`icon-btn h-9 w-9 sm:h-10 sm:w-10 relative ${openMenu === 'notif' ? 'bg-brand-soft text-brand' : ''}`}
               onClick={() => toggle('notif')}
               title={t('nav.notifications')}
-              aria-label={t('nav.notifications')}
+              aria-label={unread ? `${t('nav.notifications')} (${unread})` : t('nav.notifications')}
+              aria-expanded={openMenu === 'notif'}
             >
               <Bell size={19} />
               {unread > 0 && (
@@ -221,7 +228,7 @@ export default function TopBar() {
             </Popover>
           </div>
           <div className="relative">
-            <button className="rounded-full hover:brightness-95" onClick={() => toggle('account')} aria-label={t('nav.account')}>
+            <button className="rounded-full hover:brightness-95" onClick={() => toggle('account')} aria-label={t('nav.account')} title={t('nav.account')} aria-expanded={openMenu === 'account'}>
               <Avatar id={me.id} name={me.display_name} url={me.avatar_url} size={40} />
             </button>
             <Popover open={openMenu === 'account'} className="sm:w-[340px]">

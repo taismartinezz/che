@@ -31,6 +31,7 @@ const en: Translation = {
     privacy: 'Privacy',
     back_home: 'Back to home',
   },
+  nav_short: { home: 'Home', network: 'Network', groups: 'Groups', payments: 'Payments', roadmap: 'Roadmap' },
   cities: { mvd: 'Montevideo', bue: 'Buenos Aires' },
   categories: {
     all: 'All',
