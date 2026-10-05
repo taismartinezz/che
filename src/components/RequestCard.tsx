@@ -128,16 +128,19 @@ export default function RequestCard({ request, recCount, iOffered, onChanged }: 
         <Menu items={menu} />
       </header>
 
-      <p className="px-4 pt-3 pb-1 whitespace-pre-wrap break-words text-base">{request.text}</p>
+      <p className="px-4 pt-3 pb-2 whitespace-pre-wrap break-words text-base">{request.text}</p>
 
-      <div className="flex items-center justify-between px-4 py-2 text-sm text-ink-2">
-        <span>{t('feed.offers_count', { count: offers })}</span>
-        {recCount !== undefined && (
-          <button className="hover:underline" onClick={seeWho}>
-            {t('feed.recommended_count', { count: recCount })}
-          </button>
-        )}
-      </div>
+      {/* Only show signals that exist: no "0 vecinos se ofrecieron". */}
+      {(offers > 0 || (recCount ?? 0) > 0) && (
+        <div className="flex items-center gap-3 px-4 py-2 text-sm text-ink-2">
+          {offers > 0 && <span>{t('feed.offers_count', { count: offers })}</span>}
+          {(recCount ?? 0) > 0 && (
+            <button className="ml-auto hover:underline" onClick={seeWho}>
+              {t('feed.recommended_count', { count: recCount })}
+            </button>
+          )}
+        </div>
+      )}
 
       <div className="mx-2 sm:mx-4 border-t border-divider flex py-1 gap-0.5 sm:gap-1">
         {isMine ? (
