@@ -24,6 +24,7 @@ import { useData } from '../context/DataContext';
 import { CITIES } from '../lib/constants';
 import { useClickOutside } from '../hooks/useClickOutside';
 import Avatar from './Avatar';
+import { setLanguage } from '../i18n';
 import NotificationList from './NotificationList';
 
 export const TABS = [
@@ -39,7 +40,7 @@ function Logo() {
     <Link
       to="/"
       aria-label="Che, ¿conocés?"
-      className="h-10 w-10 rounded-full bg-brand text-white flex items-center justify-center font-extrabold text-[15px] tracking-tight shrink-0 hover:bg-brand-hover"
+      className="h-10 w-10 rounded-full bg-brand-fill text-white flex items-center justify-center font-extrabold text-[15px] tracking-tight shrink-0 hover:bg-brand-fill-hover"
     >
       che
     </Link>
@@ -181,7 +182,7 @@ export default function TopBar() {
           </div>
           <button
             className="icon-btn h-9 w-9 sm:h-10 sm:w-10 text-[13px] font-bold"
-            onClick={() => i18n.changeLanguage(i18n.language === 'es' ? 'en' : 'es')}
+            onClick={() => setLanguage(i18n.language === 'es' ? 'en' : 'es')}
             title={t('nav.language')}
             aria-label={t('nav.language')}
           >
@@ -269,7 +270,7 @@ function MenuRow({ icon, label, onClick, right }: { icon: ReactNode; label: stri
 
 export function Switch({ on }: { on: boolean }) {
   return (
-    <span className={`relative inline-block h-6 w-11 rounded-full transition-colors ${on ? 'bg-brand' : 'bg-divider'}`} aria-hidden>
+    <span className={`relative inline-block h-6 w-11 rounded-full transition-colors ${on ? 'bg-brand-fill' : 'bg-divider'}`} aria-hidden>
       <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-all ${on ? 'left-[22px]' : 'left-0.5'}`} />
     </span>
   );

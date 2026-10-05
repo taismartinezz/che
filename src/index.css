@@ -7,6 +7,9 @@
   --brand-hover: 92 49 186;   /* #5C31BA */
   --brand-soft: 239 232 253;  /* #EFE8FD */
   --on-brand: 255 255 255;
+  /* Filled surfaces (primary buttons, selected chips, own chat bubbles): white text on top. */
+  --brand-fill: 109 63 209;   /* #6D3FD1 */
+  --brand-fill-hover: 92 49 186;
   --page: 240 242 245;        /* #F0F2F5 */
   --card: 255 255 255;
   --ink: 5 5 5;               /* #050505 */
@@ -25,7 +28,11 @@
   --brand: 169 139 255;       /* #A98BFF */
   --brand-hover: 189 165 255;
   --brand-soft: 58 46 92;
-  --on-brand: 24 25 26;
+  --on-brand: 255 255 255;
+  /* White on #A98BFF is too low-contrast, so filled surfaces keep #6D3FD1 in dark mode;
+     #A98BFF is used for text, icons, underlines and focus rings. */
+  --brand-fill: 109 63 209;   /* #6D3FD1 */
+  --brand-fill-hover: 124 82 224;
   --page: 24 25 26;           /* #18191A */
   --card: 36 37 38;           /* #242526 */
   --ink: 228 230 235;         /* #E4E6EB */
@@ -59,7 +66,7 @@ body {
     @apply inline-flex items-center justify-center gap-2 rounded-md px-3 h-9 text-[15px] font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand;
   }
   .btn-primary {
-    @apply btn bg-brand text-brand-on hover:bg-brand-hover disabled:bg-field disabled:text-ink-2 disabled:opacity-100;
+    @apply btn bg-brand-fill text-brand-on hover:bg-brand-fill-hover disabled:bg-field disabled:text-ink-2 disabled:opacity-100;
   }
   .btn-secondary {
     @apply btn bg-field text-ink hover:bg-divider;
@@ -69,6 +76,9 @@ body {
   }
   .btn-ghost {
     @apply btn text-ink-2 hover:bg-hover;
+  }
+  .link {
+    @apply text-brand hover:underline;
   }
   .btn-danger {
     @apply btn bg-danger text-white hover:brightness-95;
@@ -83,13 +93,13 @@ body {
     @apply block text-sm font-semibold text-ink mb-1;
   }
   .chip {
-    @apply inline-flex items-center rounded-full px-3 h-8 text-sm font-medium border transition-colors whitespace-nowrap;
+    @apply inline-flex items-center rounded-full px-3 h-8 text-sm font-medium border transition-colors whitespace-nowrap focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand;
   }
   .chip-off {
     @apply chip border-divider text-ink-2 hover:text-ink hover:bg-hover;
   }
   .chip-on {
-    @apply chip border-brand bg-brand text-brand-on;
+    @apply chip border-brand-fill bg-brand-fill text-brand-on;
   }
   .tag {
     @apply inline-flex items-center rounded px-1.5 py-0.5 text-xs font-medium;

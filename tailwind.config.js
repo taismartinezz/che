@@ -7,7 +7,7 @@ export default {
   theme: {
     extend: {
       colors: {
-        brand: { DEFAULT: v('brand'), hover: v('brand-hover'), soft: v('brand-soft'), on: v('on-brand') },
+        brand: { DEFAULT: v('brand'), hover: v('brand-hover'), soft: v('brand-soft'), on: v('on-brand'), fill: v('brand-fill'), 'fill-hover': v('brand-fill-hover') },
         page: v('page'),
         card: v('card'),
         ink: { DEFAULT: v('ink'), 2: v('ink-2') },

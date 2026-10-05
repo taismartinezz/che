@@ -139,6 +139,7 @@ const es = {
     recommended_count_one: '{{count}} recomendado',
     recommended_count_other: '{{count}} recomendados',
     help: 'Ta, te ayudo',
+    help_tooltip: '',
     helping: 'Te ofreciste',
     who_do_you_know: 'Ver a quién conocés',
     share: 'Compartir',

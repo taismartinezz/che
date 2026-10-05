@@ -4,12 +4,13 @@ import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
 import { friendlyError } from '../lib/errors';
 import RichText from '../components/RichText';
+import { setLanguage } from '../i18n';
 
 export function PublicFooter() {
   const { t, i18n } = useTranslation();
   return (
     <footer className="text-xs text-ink-2 text-center py-6 space-x-3">
-      <button className="hover:underline" onClick={() => i18n.changeLanguage(i18n.language === 'es' ? 'en' : 'es')}>
+      <button className="hover:underline" onClick={() => setLanguage(i18n.language === 'es' ? 'en' : 'es')}>
         {i18n.language === 'es' ? 'English' : 'Español'}
       </button>
       <Link to="/terminos" className="hover:underline">{t('nav.terms')}</Link>

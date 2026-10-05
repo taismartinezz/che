@@ -160,7 +160,7 @@ function Thread({ otherId, onSent }: { otherId: string; onSent: () => void }) {
                 <div className={`flex ${mine ? 'justify-end' : 'justify-start'}`}>
                   <p
                     className={`max-w-[78%] rounded-2xl px-3 py-2 text-[15px] whitespace-pre-wrap break-words ${
-                      mine ? 'bg-brand text-brand-on' : 'bg-field text-ink'
+                      mine ? 'bg-brand-fill text-brand-on' : 'bg-field text-ink'
                     }`}
                   >
                     {m.body}

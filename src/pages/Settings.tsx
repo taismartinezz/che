@@ -12,6 +12,7 @@ import { useData } from '../context/DataContext';
 import { useUI } from '../context/UIContext';
 import { supabase } from '../lib/supabase';
 import { api } from '../lib/api';
+import { setLanguage } from '../i18n';
 import { PROFILE_MINI } from '../lib/constants';
 import type { MiniProfile } from '../lib/types';
 
@@ -91,7 +92,7 @@ export default function Settings() {
                 <button
                   key={l}
                   className={`px-4 h-8 rounded-md text-sm font-semibold ${i18n.language === l ? 'bg-card shadow-card text-brand' : 'text-ink-2'}`}
-                  onClick={() => i18n.changeLanguage(l)}
+                  onClick={() => setLanguage(l)}
                   aria-pressed={i18n.language === l}
                 >
                   {l === 'es' ? 'Español' : 'English'}

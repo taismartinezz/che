@@ -135,7 +135,7 @@ export default function RequestCard({ request, recCount, iOffered, onChanged }: 
         <div className="flex items-center gap-3 px-4 py-2 text-sm text-ink-2">
           {offers > 0 && <span>{t('feed.offers_count', { count: offers })}</span>}
           {(recCount ?? 0) > 0 && (
-            <button className="ml-auto hover:underline" onClick={seeWho}>
+            <button className="ml-auto link" onClick={seeWho}>
               {t('feed.recommended_count', { count: recCount })}
             </button>
           )}
@@ -157,6 +157,7 @@ export default function RequestCard({ request, recCount, iOffered, onChanged }: 
             disabled={busy || (!open && !iOffered)}
             onClick={toggleHelp}
             aria-pressed={iOffered}
+            title={t('feed.help_tooltip') || undefined}
           >
             <Hand size={18} />
             <span className="truncate">{iOffered ? t('feed.helping') : t('feed.help')}</span>

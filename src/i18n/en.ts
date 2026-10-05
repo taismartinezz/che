@@ -138,7 +138,8 @@ const en: Translation = {
     offers_count_other: '{{count}} neighbours offered',
     recommended_count_one: '{{count}} recommended',
     recommended_count_other: '{{count}} recommended',
-    help: "Sure, I'll help",
+    help: "Ta, I'll help",
+    help_tooltip: '"Ta" = OK in Uruguayan Spanish',
     helping: 'You offered',
     who_do_you_know: 'See who you know',
     share: 'Share',
@@ -497,7 +498,7 @@ const en: Translation = {
     coming: "What's coming",
     items_today: {
       requests: 'Ask your neighbourhood for help and see requests live',
-      offers: '"Sure, I\'ll help" to offer a hand',
+      offers: '"Ta, I\'ll help" to offer a hand',
       network: 'Friends network, invites and "People you may know"',
       recs: 'Trust-based recommendations with clear reasons',
       intros: 'Intros via a mutual friend, sharing WhatsApp only when both agree',

@@ -12,7 +12,7 @@ function Item({ to, icon, label, soon }: { to?: string; icon: ReactNode; label: 
   const { showSoon } = useUI();
   const body = (
     <>
-      <span className="text-ink-2 shrink-0">{icon}</span>
+      <span className="text-brand shrink-0">{icon}</span>
       <span className="grow truncate">{label}</span>
       {soon && <SoonTag />}
     </>
