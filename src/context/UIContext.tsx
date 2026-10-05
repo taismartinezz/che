@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import type { CityCode, SoonFeature } from '../lib/constants';
 import { friendlyError } from '../lib/errors';
 import ComingSoonDialog from '../components/ComingSoonDialog';
@@ -52,18 +52,20 @@ export function UIProvider({ children }: { children: ReactNode }) {
     setTimeout(() => setToasts((ts) => ts.filter((x) => x.id !== id)), 4500);
   }, []);
 
-  const value: UIState = {
-    dark,
-    toggleDark,
-    viewCity,
-    setViewCity: setViewCityState,
-    showSoon: setSoon,
-    toast: (text) => push(text, 'ok'),
-    toastError: (err) => {
+  // Stable functions: screens use toast/toastError in effect dependencies, so a
+  // new function on every render would make them reload (and close dialogs).
+  const toast = useCallback((text: string) => push(text, 'ok'), [push]);
+  const toastError = useCallback(
+    (err: unknown) => {
       console.error(err);
       push(friendlyError(err), 'error');
     },
-  };
+    [push],
+  );
+  const value = useMemo<UIState>(
+    () => ({ dark, toggleDark, viewCity, setViewCity: setViewCityState, showSoon: setSoon, toast, toastError }),
+    [dark, toggleDark, viewCity, toast, toastError],
+  );
 
   return (
     <UIContext.Provider value={value}>

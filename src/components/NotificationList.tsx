@@ -95,9 +95,10 @@ export default function NotificationList({ limit, onNavigate }: { limit?: number
         const p = n.payload;
         const intro = p.intro_id ? intros[p.intro_id] : undefined;
         let key = KNOWN.includes(n.type) ? n.type : 'unknown';
-        if (n.type === 'intro_target' && p.via_name) key = 'intro_target_via';
+        if (n.type === 'intro_target' && p.via_name) key = p.hop_name ? 'intro_target_hop' : 'intro_target_via';
+        if (n.type === 'intro_via' && p.hop_name) key = 'intro_via_hop';
         const values = { ...p, category: p.category ? t(`categories.${p.category}`) : '', note: p.note ?? '' };
-        const viaFirst = key === 'intro_target_via' || n.type === 'intro_via_accepted';
+        const viaFirst = key === 'intro_target_via' || key === 'intro_target_hop' || n.type === 'intro_via_accepted';
         const actor = (viaFirst ? p.via_name : p.from_name) ?? p.from_name ?? p.via_name ?? p.other_name ?? p.target_name ?? '';
         const actorId = (viaFirst ? p.via_id : p.from_id) ?? p.from_id ?? p.via_id ?? p.other_id ?? p.target_id ?? '';
 

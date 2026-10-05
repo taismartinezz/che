@@ -50,6 +50,10 @@ export interface Recommendation {
   same_neighbourhood: boolean;
   is_verified: boolean;
   reasons: string[];
+  /** Only for people 3 steps away: my friend who can ask, and their friend who knows the person. */
+  bridge_id: string | null;
+  bridge_name: string | null;
+  hop_name: string | null;
 }
 
 export interface IntroRequest {

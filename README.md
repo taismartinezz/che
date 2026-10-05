@@ -49,7 +49,7 @@ Without the env vars, the app shows a setup screen.
 
 ### Launch features: what to configure
 
-1. Run `supabase/migrations/20261003000000_launch_features.sql` after the first migration. It adds chat, groups, push subscriptions and verification, and creates the private `verification` storage bucket.
+1. Run `supabase/migrations/20261003000000_launch_features.sql` after the first migration. Then run `supabase/migrations/20261005000000_recommendation_paths.sql`: it lets the author of a request ask a friend to ask around for someone 3 steps away (me → my friend → their friend → them). It adds chat, groups, push subscriptions and verification, and creates the private `verification` storage bucket.
 2. **Email + push notifications.** These are sent by the Edge Function in `supabase/functions/notify`.
    1. Generate VAPID keys once with `npx web-push generate-vapid-keys`.
    2. Set the secrets and deploy:

@@ -130,9 +130,9 @@ export default function RequestPage() {
                         <div className="text-sm text-ink-2">{p.neighbourhood}</div>
                       </div>
                       {isFriend || shared ? (
-                        <button className="btn-primary h-8 text-sm" onClick={() => openWhatsApp(hid, p.display_name, waText)}>
+                        <Link className="btn-primary h-8 text-sm" to={`/chat/${hid}`}>
                           {t('recs.write')}
-                        </button>
+                        </Link>
                       ) : intro ? (
                         <IntroStatus intro={intro} />
                       ) : request.status === 'open' ? (

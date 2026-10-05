@@ -165,6 +165,13 @@ const en: Translation = {
     sensitive_note: 'Babysitting & care: we only recommend people with verified identity and background.',
   },
   recs: {
+    label_friend: 'Your friend',
+    label_friend_of: 'Friend of {{name}}',
+    label_far: 'Further out in your network',
+    via_path: 'via {{bridge}} and {{hop}}',
+    ask_bridge: 'Ask {{name}} to ask around',
+    bridge_sent: "We told {{name}}. If they can, they'll ask their contact.",
+    score_small: '{{score}} trust',
     no_network: "You don't have a network yet. Invite friends to see who they know.",
     from_neighbourhood: 'From the neighbourhood',
     title: 'Who you know',
@@ -338,6 +345,8 @@ const en: Translation = {
       intro_target_via:
         '<b>{{via_name}}</b> wants to introduce you to <b>{{from_name}}</b>, who needs: "{{request_text}}". Share WhatsApp numbers?',
       intro_target: '<b>{{from_name}}</b> wants to contact you about: "{{request_text}}". Share WhatsApp numbers?',
+      intro_via_hop: '<b>{{from_name}}</b> asks you to check with <b>{{hop_name}}</b> about <b>{{target_name}}</b>, for: "{{request_text}}". If you accept, we ask {{target_name}} whether they want to share contacts.',
+      intro_target_hop: '<b>{{via_name}}</b> (a friend of <b>{{hop_name}}</b>) wants to introduce you to <b>{{from_name}}</b>, who needs: "{{request_text}}". Share WhatsApp numbers?',
       intro_via_accepted:
         '<b>{{via_name}}</b> agreed to introduce you to <b>{{target_name}}</b>. Now we\'re asking {{target_name}}.',
       intro_accepted: 'Done! You and <b>{{other_name}}</b> both accepted. You can message each other now.',

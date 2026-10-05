@@ -167,7 +167,7 @@ export default function Profile() {
                 {fs.state === 'friends' && (
                   <>
                     <Link className="btn-primary" to={`/chat/${person.id}`}>
-                      {t('nav.chat')}
+                      {t('recs.write')}
                     </Link>
                     <button className="btn-secondary" onClick={() => openWhatsApp(person.id, person.display_name)}>
                       WhatsApp

@@ -46,6 +46,8 @@ function render(type: string, p: Payload, lang: 'es' | 'en'): { title: string; b
     case 'offer':
       return { title: es ? 'Te ofrecieron ayuda' : 'Someone offered to help', body: es ? `${p.from_name} te dijo "Ta, te ayudo": "${p.request_text}"` : `${p.from_name} offered to help: "${p.request_text}"`, path: req };
     case 'intro_via':
+      if (p.hop_name)
+        return { title: es ? 'Te piden que preguntes' : 'Can you ask around?', body: es ? `${p.from_name} te pide que le preguntes a ${p.hop_name} por ${p.target_name}.` : `${p.from_name} asks you to check with ${p.hop_name} about ${p.target_name}.`, path: '/notificaciones' };
       return { title: es ? 'Te piden una presentación' : 'Intro request', body: es ? `${p.from_name} te pide que lo/la presentes con ${p.target_name}.` : `${p.from_name} asks you to introduce them to ${p.target_name}.`, path: '/notificaciones' };
     case 'intro_target':
       return { title: es ? 'Alguien quiere contactarte' : 'Someone wants to contact you', body: p.via_name ? (es ? `${p.via_name} te quiere presentar a ${p.from_name}: "${p.request_text}"` : `${p.via_name} wants to introduce you to ${p.from_name}: "${p.request_text}"`) : (es ? `${p.from_name} quiere contactarte por: "${p.request_text}"` : `${p.from_name} wants to contact you about: "${p.request_text}"`), path: '/notificaciones' };
