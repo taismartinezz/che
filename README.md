@@ -73,6 +73,20 @@ Without the env vars, the app shows a setup screen.
 
 To see trust scores change, open an invite link to a seed person after you sign up, e.g. `/invite/MARTIN26` (Montevideo) or `/invite/AGUS2026` (Buenos Aires). Martín then becomes your friend, Lucía and Diego become friends of friends, and the rankings update.
 
+### Demo account for presentations (`supabase/seed/demo.sql`)
+
+Use it to show the trust recommendations with your own account, e.g. in the grant interview.
+
+1. Sign up on the site with your account and finish onboarding. Choose Montevideo, or switch to Montevideo with the city button later.
+2. Copy your user id from Supabase → **Authentication → Users** (the "UID" column), or run `select id from auth.users where email = 'you@example.com';`.
+3. Make sure `seed.sql` has been run, then open `supabase/seed/demo.sql`. Replace the `demo_user` id at the top with yours and run the whole file in the SQL editor.
+
+Your account becomes friends with three fictional seed people: Lucía, Valentina and Camila. Then "Ver a quién conocés" shows:
+- on "¿Alguien que sepa configurar una impresora…?": Martín ("Amigo/a de Lucía") and Sofía ("Amigo/a de Camila");
+- on "Se me quemó un enchufe de la cocina…": Sofía ("Amigo/a de Camila"), Joaquín ("Amigo/a de Valentina") and Diego ("Más lejos en tu red").
+
+The script only adds friendships between your account and seed people. It refuses to run until you set the id, and running it twice is harmless. To remove it, run `remove_seed.sql`: deleting the seed people also deletes these friendships. Your account and any real friendships stay.
+
 **Before launch, run `supabase/seed/remove_seed.sql`.** It deletes all seed accounts, and everything about them cascades away.
 
 ## How privacy is enforced (in the database, not just the UI)
