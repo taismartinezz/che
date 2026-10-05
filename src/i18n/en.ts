@@ -105,6 +105,19 @@ const en: Translation = {
     required: 'Fill in your name, city and neighbourhood.',
     must_accept: 'You need to accept the Terms and the Privacy Policy.',
   },
+  welcome: {
+    title: 'Invite 3 people you trust',
+    body: 'Che works through your network: the more friends you have here, the better the recommendations. Send your link to 3 people you trust.',
+    progress: '{{count}} of 3 friends joined',
+    share_whatsapp: 'Share on WhatsApp',
+    copy: 'Copy link',
+    copied: 'Link copied!',
+    skip: 'Skip for now',
+    done: 'Done, go to the feed',
+    message: "Hey! I joined Che, an app to ask for and give a hand among people you trust in the neighbourhood. Join with my link and we'll be connected:",
+    card_title: 'Bring your people',
+    card_body: "With 3 friends on Che you'll see who they know.",
+  },
   feed: {
     composer: 'What do you need, {{name}}?',
     composer_hint: 'Ask your network for help',
@@ -152,6 +165,8 @@ const en: Translation = {
     sensitive_note: 'Babysitting & care: we only recommend people with verified identity and background.',
   },
   recs: {
+    no_network: "You don't have a network yet. Invite friends to see who they know.",
+    from_neighbourhood: 'From the neighbourhood',
     title: 'Who you know',
     subtitle: 'People in {{city}} who help with {{category}}, ranked by trust.',
     loading: 'Searching your network…',

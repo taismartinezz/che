@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 import ProfileForm from '../components/ProfileForm';
 import { PublicFooter } from './Login';
+import { markWelcomePending } from '../lib/firstRun';
 
 export default function Onboarding() {
   const { t } = useTranslation();
@@ -22,7 +23,10 @@ export default function Onboarding() {
             whatsapp={priv.contact_whatsapp}
             submitLabel={t('onboarding.submit')}
             requireTerms
-            onSaved={refreshProfile}
+            onSaved={() => {
+              markWelcomePending();
+              refreshProfile();
+            }}
           />
         </div>
       </main>

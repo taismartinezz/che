@@ -5,7 +5,8 @@ import { Info } from 'lucide-react';
 import Modal from './Modal';
 import Avatar from './Avatar';
 import { RowSkeleton } from './States';
-import InviteLink from './InviteLink';
+import { InviteButtons } from './InviteProgress';
+import { useData } from '../context/DataContext';
 import { supabase } from '../lib/supabase';
 import { api } from '../lib/api';
 import { useMe } from '../context/AuthContext';
@@ -52,8 +53,12 @@ export default function RecommendationsDialog({ request, open, onClose }: { requ
   const [intros, setIntros] = useState<IntroRequest[]>([]);
   const [busy, setBusy] = useState<string | null>(null);
   const [showHow, setShowHow] = useState(false);
+  const { friends, networkLoading } = useData();
   const isAuthor = request.author_id === me.id;
   const isOpen = request.status === 'open';
+  // Without a network, only neighbours who offer this category are worth showing.
+  const noNetwork = !networkLoading && friends.length === 0;
+  const visible = recs && (noNetwork ? recs.filter((r) => r.same_neighbourhood) : recs);
 
   const load = useCallback(async () => {
     const [{ data, error }, { data: ints }] = await Promise.all([
@@ -106,23 +111,33 @@ export default function RecommendationsDialog({ request, open, onClose }: { requ
       {showHow && <p className="text-xs text-ink-2 bg-field rounded-lg p-3 mb-3">{t('recs.how')}</p>}
       {isAuthor === false && <p className="text-xs text-ink-2 mb-3">{t('recs.only_author')}</p>}
 
-      {recs === null ? (
+      {noNetwork && (
+        <div className="rounded-lg border border-brand/40 p-3 mb-3 space-y-2">
+          <p className="font-medium">{t('recs.no_network')}</p>
+          <InviteButtons compact />
+        </div>
+      )}
+
+      {recs === null || visible === null ? (
         <div className="py-2">
           <p className="text-sm text-ink-2 mb-3">{t('recs.loading')}</p>
           <RowSkeleton rows={4} />
         </div>
-      ) : recs.length === 0 ? (
-        <div className="text-center py-6 space-y-3">
-          <p className="font-semibold">{t('recs.empty')}</p>
-          {request.category === 'cuidado' && <p className="text-sm text-ink-2">{t('create.sensitive_note')}</p>}
-          <p className="text-sm text-ink-2">{t('recs.empty_hint')}</p>
-          <div className="max-w-xs mx-auto">
-            <InviteLink compact />
+      ) : visible.length === 0 ? (
+        noNetwork ? null : (
+          <div className="text-center py-6 space-y-3">
+            <p className="font-semibold">{t('recs.empty')}</p>
+            {request.category === 'cuidado' && <p className="text-sm text-ink-2">{t('create.sensitive_note')}</p>}
+            <p className="text-sm text-ink-2">{t('recs.empty_hint')}</p>
+            <div className="max-w-xs mx-auto">
+              <InviteButtons compact />
+            </div>
           </div>
-        </div>
+        )
       ) : (
         <ul>
-          {recs.map((r) => {
+          {noNetwork && <li className="text-sm font-semibold text-ink-2 pb-1">{t('recs.from_neighbourhood')}</li>}
+          {visible.map((r) => {
             const intro = intros.find((i) => i.target_id === r.user_id);
             const isFriend = r.distance === 1;
             return (

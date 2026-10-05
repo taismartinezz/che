@@ -13,3 +13,8 @@ export async function shareLink(text: string, url: string) {
 }
 
 export const requestUrl = (id: string) => `${window.location.origin}/pedido/${id}`;
+
+/** Direct WhatsApp share link (works on phones and WhatsApp Web). */
+export const whatsappShareUrl = (text: string) => `https://wa.me/?text=${encodeURIComponent(text)}`;
+
+export const INVITE_GOAL = 3;

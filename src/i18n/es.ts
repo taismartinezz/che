@@ -105,6 +105,19 @@ const es = {
     required: 'Completá tu nombre, ciudad y barrio.',
     must_accept: 'Tenés que aceptar los Términos y la Política de privacidad.',
   },
+  welcome: {
+    title: 'Invitá a 3 personas de confianza',
+    body: 'Che funciona con tu red: cuantos más amigos tengas acá, mejores son las recomendaciones. Mandale tu link a 3 personas en las que confiás.',
+    progress: '{{count}} de 3 amigos se sumaron',
+    share_whatsapp: 'Compartir por WhatsApp',
+    copy: 'Copiar link',
+    copied: '¡Link copiado!',
+    skip: 'Saltar por ahora',
+    done: 'Listo, ir al inicio',
+    message: '¡Che! Me sumé a Che, una app para pedir y dar una mano entre gente de confianza del barrio. Sumate con mi link y quedamos conectados:',
+    card_title: 'Sumá a tu gente',
+    card_body: 'Con 3 amigos en Che vas a ver a quién conocen.',
+  },
   feed: {
     composer: '¿Qué necesitás, {{name}}?',
     composer_hint: 'Pedí ayuda a tu red',
@@ -152,6 +165,8 @@ const es = {
     sensitive_note: 'Niñeras y cuidado: solo recomendamos personas con identidad y antecedentes verificados.',
   },
   recs: {
+    no_network: 'Todavía no tenés red. Invitá amigos para ver a quién conocen.',
+    from_neighbourhood: 'Del barrio',
     title: 'A quién conocés',
     subtitle: 'Personas de {{city}} que dan una mano en {{category}}, ordenadas por confianza.',
     loading: 'Buscando en tu red…',

@@ -7,6 +7,7 @@ import Avatar from '../components/Avatar';
 import CategoryChips from '../components/CategoryChips';
 import RequestCard from '../components/RequestCard';
 import CreateRequestDialog from '../components/CreateRequestDialog';
+import { InviteCard } from '../components/InviteProgress';
 import { EmptyState, PostSkeleton } from '../components/States';
 import { useMe } from '../context/AuthContext';
 import { useUI } from '../context/UIContext';
@@ -111,6 +112,8 @@ export default function Feed() {
           {t('feed.composer', { name: firstName })}
         </button>
       </div>
+
+      <InviteCard />
 
       {/* Filters + search */}
       <div className="card p-3 space-y-3">

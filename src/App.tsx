@@ -23,6 +23,8 @@ import GroupPage from './pages/GroupPage';
 import Notifications from './pages/Notifications';
 import Legal from './pages/Legal';
 import { INVITE_KEY, Invite, NotFound, Setup } from './pages/Misc';
+import Welcome from './pages/Welcome';
+import { clearWelcomePending, isWelcomePending, rememberNextPath, takeNextPath } from './lib/firstRun';
 
 /** Redeems a stored invite code once the user has finished onboarding. */
 function InviteRedeemer() {
@@ -48,41 +50,34 @@ function InviteRedeemer() {
         await refreshNetwork();
         const { data } = await supabase.from('profiles').select('display_name').eq('id', inviter).maybeSingle();
         toast(t('network.invite_connected', { name: data?.display_name ?? '' }));
-        navigate('/red');
+        if (window.location.pathname !== '/bienvenida') navigate('/red');
       })
       .catch(() => undefined);
   }, [profile?.onboarded, profile?.invite_code, refreshNetwork, toast, t, navigate]);
   return null;
 }
 
-const NEXT_KEY = 'che-next';
-
 /** Remembers a deep link (e.g. a shared /pedido/… link) while signed out. */
 function RememberAndLogin() {
   const location = useLocation();
-  try {
-    if (location.pathname !== '/' && location.pathname !== '/login') {
-      sessionStorage.setItem(NEXT_KEY, location.pathname + location.search);
-    }
-  } catch {
-    /* ignore */
-  }
+  if (location.pathname !== '/' && location.pathname !== '/login') rememberNextPath(location.pathname + location.search);
   return <Navigate to="/login" replace />;
 }
 
-/** After sign-in + onboarding, go back to the remembered deep link once. */
-function ReturnToDeepLink() {
+/**
+ * Right after onboarding: show the "invite 3 people" step first (it continues to
+ * the remembered deep link). Otherwise go back to the remembered deep link once.
+ */
+function FirstRunRedirect() {
   const navigate = useNavigate();
   useEffect(() => {
-    try {
-      const next = sessionStorage.getItem(NEXT_KEY);
-      if (next) {
-        sessionStorage.removeItem(NEXT_KEY);
-        navigate(next, { replace: true });
-      }
-    } catch {
-      /* ignore */
+    if (isWelcomePending()) {
+      clearWelcomePending();
+      navigate('/bienvenida', { replace: true });
+      return;
     }
+    const next = takeNextPath();
+    if (next) navigate(next, { replace: true });
   }, [navigate]);
   return null;
 }
@@ -131,11 +126,12 @@ function AppRoutes() {
   return (
     <>
       <InviteRedeemer />
-      <ReturnToDeepLink />
+      <FirstRunRedirect />
       <LocaleSync />
       <Routes>
         {legal}
         <Route path="/" element={<Feed />} />
+        <Route path="/bienvenida" element={<Welcome />} />
         <Route path="/login" element={<Navigate to="/" replace />} />
         <Route path="/pedido/:id" element={<RequestPage />} />
         <Route path="/red" element={<Network />} />
