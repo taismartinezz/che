@@ -73,6 +73,11 @@ const es = {
     link_sent: '¡Listo! Te mandamos un enlace a {{email}}. Abrilo desde este dispositivo.',
     or: 'o',
     google: 'Seguir con Google',
+    google_failed: 'No pudimos entrar con Google. Probá de nuevo o entrá con tu email.',
+    in_app_browser:
+      'Google no deja entrar desde el navegador de esta app (Instagram, Facebook, etc.). Abrí este enlace en Chrome o Safari, o entrá con tu email.',
+    copy_link: 'Copiar enlace',
+    link_copied: 'Enlace copiado',
     no_password: 'No necesitás contraseña.',
     legal: 'Al continuar aceptás los <terms>Términos</terms> y la <privacy>Política de privacidad</privacy>.',
     invited: '¡Te invitaron a Che! Cuando entres, vas a quedar conectado/a con quien te invitó.',

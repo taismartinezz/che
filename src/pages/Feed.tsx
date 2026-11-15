@@ -8,6 +8,7 @@ import CategoryChips from '../components/CategoryChips';
 import RequestCard from '../components/RequestCard';
 import CreateRequestDialog from '../components/CreateRequestDialog';
 import { InviteCard } from '../components/InviteProgress';
+import ValoracionesCard from '../components/ayuda/Valoraciones';
 import { EmptyState, PostSkeleton } from '../components/States';
 import { useMe } from '../context/AuthContext';
 import { useUI } from '../context/UIContext';
@@ -114,6 +115,7 @@ export default function Feed() {
       </div>
 
       <InviteCard />
+      <ValoracionesCard />
 
       {/* Filters + search */}
       <div className="card p-3 space-y-3">

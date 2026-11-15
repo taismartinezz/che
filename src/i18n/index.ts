@@ -2,6 +2,8 @@ import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import es from './es';
 import en from './en';
+import ayudaEs from './ayuda.es';
+import ayudaEn from './ayuda.en';
 
 const LANG_KEY = 'che-lang';
 
@@ -21,7 +23,7 @@ function initialLanguage(): 'es' | 'en' {
 }
 
 i18n.use(initReactI18next).init({
-  resources: { es: { translation: es }, en: { translation: en } },
+  resources: { es: { translation: { ...es, ayuda: ayudaEs } }, en: { translation: { ...en, ayuda: ayudaEn } } },
   lng: initialLanguage(),
   fallbackLng: 'es',
   interpolation: { escapeValue: false },

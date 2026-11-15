@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import TopBar from './TopBar';
 import LeftSidebar from './LeftSidebar';
 import RightSidebar from './RightSidebar';
+import PulsoButton from './ayuda/Pulso';
 
 /**
  * Facebook-style shell. "feed": shortcuts | feed (max 680px) | "Tu red".
@@ -26,6 +27,7 @@ export default function Layout({ children, variant = 'feed' }: { children: React
       ) : (
         <main className="mx-auto w-full max-w-[940px] py-3 sm:py-4 sm:px-4 space-y-3 sm:space-y-4">{children}</main>
       )}
+      <PulsoButton />
     </div>
   );
 }

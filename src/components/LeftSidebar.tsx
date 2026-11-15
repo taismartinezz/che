@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Map as MapIcon, MessageCircle, Settings, Shield, Users, UsersRound, Wallet } from 'lucide-react';
+import { HelpCircle, Map as MapIcon, MessageCircle, Settings, Shield, Users, UsersRound, Wallet } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { useMe } from '../context/AuthContext';
 import { useUI } from '../context/UIContext';
@@ -45,10 +45,12 @@ export default function LeftSidebar() {
       <Item to="/pagos" icon={<Wallet size={20} />} label={t('nav.payments')} soon="payments" />
       <Item to="/hoja-de-ruta" icon={<MapIcon size={20} />} label={t('nav.roadmap')} />
       <Item to="/ajustes" icon={<Settings size={20} />} label={t('nav.settings')} />
+      <Item to="/ayuda" icon={<HelpCircle size={20} />} label={t('ayuda.nav')} />
       {priv.is_admin && <Item to="/admin" icon={<Shield size={20} />} label={t('nav.admin')} />}
       <p className="px-2 pt-4 text-xs text-ink-2 leading-relaxed">
         <Link to="/terminos" className="hover:underline">{t('nav.terms')}</Link> ·{' '}
-        <Link to="/privacidad" className="hover:underline">{t('nav.privacy')}</Link> · Che © 2026
+        <Link to="/privacidad" className="hover:underline">{t('nav.privacy')}</Link> ·{' '}
+        <Link to="/ayuda" className="hover:underline">{t('ayuda.nav')}</Link> · Che © 2026
         <br />
         {t('app.disclaimer')}
       </p>
