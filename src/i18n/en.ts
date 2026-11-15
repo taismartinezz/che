@@ -73,6 +73,11 @@ const en: Translation = {
     link_sent: 'Done! We sent a link to {{email}}. Open it on this device.',
     or: 'or',
     google: 'Continue with Google',
+    google_failed: "We couldn't sign you in with Google. Try again or use your email.",
+    in_app_browser:
+      "Google doesn't allow sign-in from this app's browser (Instagram, Facebook, etc.). Open this link in Chrome or Safari, or use your email.",
+    copy_link: 'Copy link',
+    link_copied: 'Link copied',
     no_password: 'No password needed.',
     legal: 'By continuing you accept the <terms>Terms</terms> and the <privacy>Privacy Policy</privacy>.',
     invited: "You've been invited to Che! Once you sign in, you'll be connected with the person who invited you.",

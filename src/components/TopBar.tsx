@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import {
   Bell,
   Check,
+  HelpCircle,
   Home,
   LogOut,
   Map as MapIcon,
@@ -240,6 +241,7 @@ export default function TopBar() {
                 </div>
               </Link>
               <MenuRow icon={<Settings size={20} />} label={t('nav.settings')} onClick={() => { setOpenMenu(null); navigate('/ajustes'); }} />
+              <MenuRow icon={<HelpCircle size={20} />} label={t('ayuda.nav')} onClick={() => { setOpenMenu(null); navigate('/ayuda'); }} />
               <MenuRow icon={<Moon size={20} />} label={t('nav.dark_mode')} onClick={toggleDark} right={<Switch on={dark} />} />
               {priv.is_admin && (
                 <MenuRow icon={<Shield size={20} />} label={t('nav.admin')} onClick={() => { setOpenMenu(null); navigate('/admin'); }} />
@@ -247,7 +249,8 @@ export default function TopBar() {
               <MenuRow icon={<LogOut size={20} />} label={t('nav.sign_out')} onClick={signOut} />
               <p className="px-2 pt-2 text-xs text-ink-2">
                 <Link to="/terminos" className="hover:underline">{t('nav.terms')}</Link> ·{' '}
-                <Link to="/privacidad" className="hover:underline">{t('nav.privacy')}</Link> · Che © 2026
+                <Link to="/privacidad" className="hover:underline">{t('nav.privacy')}</Link> ·{' '}
+                <Link to="/ayuda" className="hover:underline">{t('ayuda.nav')}</Link> · Che © 2026
               </p>
             </Popover>
           </div>

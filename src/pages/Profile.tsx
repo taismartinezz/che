@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Ban, Flag } from 'lucide-react';
+import { Ban, Flag, MessageSquareWarning } from 'lucide-react';
 import Layout from '../components/Layout';
 import Avatar from '../components/Avatar';
 import Menu, { type MenuItem } from '../components/Menu';
@@ -38,6 +38,7 @@ export default function Profile() {
   const { friendState, refreshNetwork } = useData();
   const { showSoon, toast, toastError } = useUI();
   const openWhatsApp = useOpenWhatsApp();
+  const navigate = useNavigate();
   const [person, setPerson] = useState<ProfileT | null | undefined>(undefined);
   const [endorsements, setEndorsements] = useState<Endorsement[]>([]);
   const [thanks, setThanks] = useState<Thanks[]>([]);
@@ -106,6 +107,11 @@ export default function Profile() {
   const menu: MenuItem[] = isMe
     ? []
     : [
+        {
+          label: t('ayuda.report_or_claim'),
+          icon: <MessageSquareWarning size={18} />,
+          onClick: () => navigate(`/ayuda/reclamo?con=${person.id}`),
+        },
         { label: t('safety.report_profile'), icon: <Flag size={18} />, onClick: () => setDialog('report') },
         {
           label: `${t('safety.block')} ${first}`,

@@ -67,6 +67,21 @@ function render(type: string, p: Payload, lang: 'es' | 'en'): { title: string; b
       return { title: es ? 'Identidad verificada' : 'Identity verified', body: es ? 'Revisamos tus documentos y tu perfil ya está verificado.' : 'We reviewed your documents and your profile is now verified.', path: '/ajustes' };
     case 'verification_rejected':
       return { title: es ? 'No pudimos verificarte' : "We couldn't verify you", body: (es ? 'Revisá los documentos y volvé a enviarlos.' : 'Check your documents and send them again.') + (p.note ? ` ${p.note}` : ''), path: '/ajustes' };
+    // Ayuda. Neutral on purpose: no details of the claim in emails or push.
+    case 'reclamo_nuevo':
+      return { title: es ? 'Hay un reclamo sobre un favor con vos' : "There's a claim about a favour with you", body: es ? `Reclamo ${p.codigo}. Contá tu versión: tenés 72 h.` : `Claim ${p.codigo}. Give your side: you have 72 h.`, path: `/ayuda/reclamos/${p.reclamo_id}` };
+    case 'reclamo_estado': {
+      const estados = {
+        es: { recibido: 'Recibido', en_revision: 'En revisión', esperando_respuesta: 'Esperando respuesta de la otra parte', resuelto: 'Resuelto', cerrado: 'Cerrado' },
+        en: { recibido: 'Received', en_revision: 'Under review', esperando_respuesta: 'Waiting for the other side', resuelto: 'Resolved', cerrado: 'Closed' },
+      } as const;
+      const e = estados[lang][p.estado as keyof typeof estados.es] ?? p.estado;
+      return { title: es ? `Reclamo ${p.codigo}` : `Claim ${p.codigo}`, body: es ? `Tu reclamo pasó a: ${e}.` : `Your claim is now: ${e}.`, path: `/ayuda/reclamos/${p.reclamo_id}` };
+    }
+    case 'reclamo_mensaje':
+      return { title: es ? `Reclamo ${p.codigo}` : `Claim ${p.codigo}`, body: es ? 'Hay un mensaje nuevo.' : "There's a new message.", path: `/ayuda/reclamos/${p.reclamo_id}` };
+    case 'valorar_favor':
+      return { title: es ? '¿Cómo salió el favor?' : 'How did the favour go?', body: es ? `Contanos cómo salió con ${p.other_name}.` : `Tell us how it went with ${p.other_name}.`, path: `/?valorar=${p.favor_id}` };
     default:
       return { title: 'Che', body: es ? 'Tenés una novedad.' : 'You have something new.', path: '/notificaciones' };
   }

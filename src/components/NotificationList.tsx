@@ -29,6 +29,8 @@ const KNOWN = [
   'verification_approved',
   'verification_rejected',
 ];
+// Ayuda notifications: texts live under ayuda.notif.
+const AYUDA = ['reclamo_nuevo', 'reclamo_estado', 'reclamo_mensaje', 'valorar_favor'];
 
 export default function NotificationList({ limit, onNavigate }: { limit?: number; onNavigate?: () => void }) {
   const { t, i18n } = useTranslation();
@@ -83,6 +85,8 @@ export default function NotificationList({ limit, onNavigate }: { limit?: number
     else if (n.type === 'endorsement' && profile) navigate(`/perfil/${profile.id}`);
     else if (n.type === 'message' && p.from_id) navigate(`/chat/${p.from_id}`);
     else if (n.type.startsWith('verification_')) navigate('/ajustes#verificacion');
+    else if (n.type.startsWith('reclamo_') && p.reclamo_id) navigate(`/ayuda/reclamos/${p.reclamo_id}`);
+    else if (n.type === 'valorar_favor' && p.favor_id) navigate(`/?valorar=${p.favor_id}`);
     else if (p.request_id) navigate(`/pedido/${p.request_id}`);
   };
 
@@ -97,7 +101,13 @@ export default function NotificationList({ limit, onNavigate }: { limit?: number
         let key = KNOWN.includes(n.type) ? n.type : 'unknown';
         if (n.type === 'intro_target' && p.via_name) key = p.hop_name ? 'intro_target_hop' : 'intro_target_via';
         if (n.type === 'intro_via' && p.hop_name) key = 'intro_via_hop';
-        const values = { ...p, category: p.category ? t(`categories.${p.category}`) : '', note: p.note ?? '' };
+        const values = {
+          ...p,
+          category: p.category ? t(`categories.${p.category}`) : '',
+          note: p.note ?? '',
+          estado: p.estado ? t(`ayuda.estados.${p.estado}`) : '',
+        };
+        const i18nKey = AYUDA.includes(n.type) ? `ayuda.notif.${n.type}` : `notifications.types.${key}`;
         const viaFirst = key === 'intro_target_via' || key === 'intro_target_hop' || n.type === 'intro_via_accepted';
         const actor = (viaFirst ? p.via_name : p.from_name) ?? p.from_name ?? p.via_name ?? p.other_name ?? p.target_name ?? '';
         const actorId = (viaFirst ? p.via_id : p.from_id) ?? p.from_id ?? p.via_id ?? p.other_id ?? p.target_id ?? '';
@@ -171,7 +181,7 @@ export default function NotificationList({ limit, onNavigate }: { limit?: number
             <Avatar id={actorId} name={actor || 'Che'} size={40} />
             <div className="min-w-0 grow">
               <button className="text-left text-[15px] leading-snug w-full" onClick={() => go(n)}>
-                <RichText i18nKey={`notifications.types.${key}`} values={values} />
+                <RichText i18nKey={i18nKey} values={values} />
               </button>
               <div className={`text-xs mt-0.5 ${n.read_at ? 'text-ink-2' : 'text-brand font-semibold'}`}>
                 {timeAgo(n.created_at, i18n.language)}

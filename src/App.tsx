@@ -24,6 +24,15 @@ import Notifications from './pages/Notifications';
 import Legal from './pages/Legal';
 import { INVITE_KEY, Invite, NotFound, Setup } from './pages/Misc';
 import Welcome from './pages/Welcome';
+import Ayuda from './pages/ayuda/Ayuda';
+import Reclamo from './pages/ayuda/Reclamo';
+import ReclamoDetalle from './pages/ayuda/ReclamoDetalle';
+import MisReclamos from './pages/ayuda/MisReclamos';
+import Reporte from './pages/ayuda/Reporte';
+import Sugerencia from './pages/ayuda/Sugerencia';
+import AdminAyuda from './pages/AdminAyuda';
+import Encuesta from './pages/encuesta/Encuesta';
+import ResultadosEncuesta from './pages/encuesta/Resultados';
 import { clearWelcomePending, isWelcomePending, rememberNextPath, takeNextPath } from './lib/firstRun';
 
 /** Redeems a stored invite code once the user has finished onboarding. */
@@ -102,6 +111,8 @@ function AppRoutes() {
     <Route key="t" path="/terminos" element={<Legal kind="terms" />} />,
     <Route key="p" path="/privacidad" element={<Legal kind="privacy" />} />,
     <Route key="i" path="/invite/:code" element={<Invite />} />,
+    <Route key="a" path="/ayuda" element={<Ayuda />} />,
+    <Route key="e" path="/encuesta" element={<Encuesta />} />,
   ];
 
   if (!session)
@@ -145,6 +156,13 @@ function AppRoutes() {
         <Route path="/ajustes" element={<Settings />} />
         <Route path="/notificaciones" element={<Notifications />} />
         <Route path="/admin" element={<Admin />} />
+        <Route path="/admin/ayuda" element={<AdminAyuda />} />
+        <Route path="/encuesta/resultados" element={<ResultadosEncuesta />} />
+        <Route path="/ayuda/reclamo" element={<Reclamo />} />
+        <Route path="/ayuda/reclamos/:id" element={<ReclamoDetalle />} />
+        <Route path="/ayuda/mis-reclamos" element={<MisReclamos />} />
+        <Route path="/ayuda/reporte" element={<Reporte />} />
+        <Route path="/ayuda/sugerencia" element={<Sugerencia />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </>
@@ -157,6 +175,7 @@ export default function App() {
       <Routes>
         <Route path="/terminos" element={<Legal kind="terms" />} />
         <Route path="/privacidad" element={<Legal kind="privacy" />} />
+        <Route path="/ayuda" element={<Ayuda />} />
         <Route path="*" element={<Setup />} />
       </Routes>
     );

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { supabase } from '../lib/supabase';
+import { AUTH_ERROR_KEY, supabase } from '../lib/supabase';
 import { friendlyError } from '../lib/errors';
 import RichText from '../components/RichText';
 import { setLanguage } from '../i18n';
@@ -15,17 +15,33 @@ export function PublicFooter() {
       </button>
       <Link to="/terminos" className="hover:underline">{t('nav.terms')}</Link>
       <Link to="/privacidad" className="hover:underline">{t('nav.privacy')}</Link>
+      <Link to="/ayuda" className="hover:underline">{t('ayuda.nav')}</Link>
       <span>Che © 2026</span>
     </footer>
   );
+}
+
+/** Google blocks OAuth inside in-app browsers ("403 disallowed_useragent"). */
+const IN_APP_BROWSER = /FBAN|FBAV|FB_IAB|Instagram|Line\/|TikTok|Snapchat|LinkedInApp|; wv\)/i.test(navigator.userAgent);
+
+function takeAuthError(): string | null {
+  try {
+    const raw = sessionStorage.getItem(AUTH_ERROR_KEY);
+    sessionStorage.removeItem(AUTH_ERROR_KEY);
+    if (raw) console.error('OAuth sign-in failed:', raw);
+    return raw;
+  } catch {
+    return null;
+  }
 }
 
 export default function Login() {
   const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [sent, setSent] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(() => (takeAuthError() ? t('auth.google_failed') : null));
   const [busy, setBusy] = useState(false);
+  const [copied, setCopied] = useState(false);
   const invited = (() => {
     try {
       return Boolean(localStorage.getItem('che-invite'));
@@ -49,11 +65,28 @@ export default function Login() {
   };
 
   const google = async () => {
+    setBusy(true);
+    setError(null);
     const { error: err } = await supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: window.location.origin },
+      // Always show the account picker, so someone with several Google accounts (or a
+      // stale session in this browser) isn't silently signed in with the wrong one.
+      options: { redirectTo: window.location.origin, queryParams: { prompt: 'select_account' } },
     });
-    if (err) setError(friendlyError(err));
+    // On success the browser leaves the page; only errors get here.
+    if (err) {
+      setBusy(false);
+      setError(friendlyError(err));
+    }
+  };
+
+  const copyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.origin);
+      setCopied(true);
+    } catch {
+      /* ignore */
+    }
   };
 
   return (
@@ -95,7 +128,15 @@ export default function Login() {
                   <div className="flex items-center gap-3 text-ink-2 text-sm">
                     <hr className="grow border-divider" /> {t('auth.or')} <hr className="grow border-divider" />
                   </div>
-                  <button className="btn-secondary w-full h-11" onClick={google}>
+                  {IN_APP_BROWSER && (
+                    <div className="rounded-lg bg-soon-bg text-soon p-3 text-sm space-y-2" role="note">
+                      <p>{t('auth.in_app_browser')}</p>
+                      <button type="button" className="btn-secondary h-8 text-sm" onClick={copyLink}>
+                        {copied ? t('auth.link_copied') : t('auth.copy_link')}
+                      </button>
+                    </div>
+                  )}
+                  <button className="btn-secondary w-full h-11" onClick={google} disabled={busy}>
                     <svg width="20" height="20" viewBox="0 0 48 48" aria-hidden>
                       <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z" />
                       <path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z" />

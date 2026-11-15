@@ -14,6 +14,9 @@ const KNOWN = [
   'invalid',
 ];
 
+// Errors raised by the Ayuda RPCs (supabase/migrations/20261115000000_ayuda_reclamos_feedback.sql).
+const AYUDA = ['not_in_network', 'reclamo_limit', 'feedback_limit', 'plazo_vencido', 'reclamo_cerrado', 'contra_sin_aviso'];
+
 /** Turns Supabase/Postgres errors into plain-language messages. */
 export function friendlyError(err: unknown): string {
   const raw =
@@ -23,6 +26,8 @@ export function friendlyError(err: unknown): string {
         ? String((err as { message: unknown }).message)
         : '';
   const code = err && typeof err === 'object' && 'code' in err ? String((err as { code: unknown }).code) : '';
+  const ayuda = AYUDA.find((k) => raw.includes(k));
+  if (ayuda) return i18n.t(`ayuda.errors.${ayuda}`);
   const known = KNOWN.find((k) => raw.includes(k));
   if (known) return i18n.t(`errors.${known}`);
   if (code === '23505') return i18n.t('errors.duplicate');

@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, Send } from 'lucide-react';
+import { ArrowLeft, MessageSquareWarning, Send } from 'lucide-react';
+import Menu from '../components/Menu';
 import Layout from '../components/Layout';
 import Avatar from '../components/Avatar';
 import { RowSkeleton } from '../components/States';
@@ -143,6 +144,20 @@ function Thread({ otherId, onSent }: { otherId: string; onSent: () => void }) {
             <Avatar id={other.id} name={other.display_name} url={other.avatar_url} size={36} />
             <span className="font-medium truncate">{other.display_name}</span>
           </Link>
+        )}
+        {other && (
+          <div className="ml-auto">
+            <Menu
+              small
+              items={[
+                {
+                  label: t('ayuda.report_or_claim'),
+                  icon: <MessageSquareWarning size={18} />,
+                  onClick: () => navigate(`/ayuda/reclamo?con=${other.id}&chat=1`),
+                },
+              ]}
+            />
+          </div>
         )}
       </div>
       <div className="grow overflow-y-auto p-3 space-y-1">
