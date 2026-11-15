@@ -65,6 +65,9 @@ Without the env vars, the app shows a setup screen.
 3. Run `supabase/migrations/20261116000000_encuesta.sql`: the public survey (`/encuesta`, no account needed) and
    its admin results (`/encuesta/resultados`). It creates the private `encuesta-audios` bucket. Questions live in
    `src/lib/encuesta/preguntas.ts`. Limit: 3 responses per device and 20 per IP per day.
+   Then run `supabase/migrations/20261117000000_encuesta_contacto.sql` (optional launch notice / 15-minute chat
+   sign-up at the end) and `supabase/migrations/20261118000000_encuesta_pais.sql` (country and city asked with P1).
+   Run both, in that order, **before** deploying the app code that uses them.
 4. **Email + push notifications.** These are sent by the Edge Function in `supabase/functions/notify`.
    1. Generate VAPID keys once with `npx web-push generate-vapid-keys`.
    2. Set the secrets and deploy:

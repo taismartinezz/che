@@ -1,5 +1,5 @@
 import { supabase } from '../supabase';
-import type { PreguntaId } from './preguntas';
+import type { Pais, PreguntaId } from './preguntas';
 
 /** Estado local de la encuesta: un token por respuesta y un id por dispositivo (para el límite diario). */
 const TOKEN_KEY = 'che-encuesta-token';
@@ -56,7 +56,13 @@ function dispositivo(): string {
   return d;
 }
 
-export async function guardar(tok: string, pregunta: PreguntaId, item: Item, trampa: string): Promise<string> {
+export async function guardar(
+  tok: string,
+  pregunta: PreguntaId,
+  item: Item,
+  trampa: string,
+  ubicacion?: { pais: Pais; zona: string },
+): Promise<string> {
   const { data, error } = await supabase.rpc('encuesta_guardar', {
     p_token: tok,
     p_dispositivo: dispositivo(),
@@ -68,16 +74,26 @@ export async function guardar(tok: string, pregunta: PreguntaId, item: Item, tra
     p_transcripcion: item.transcripcion.slice(0, 4000),
     p_user_agent: navigator.userAgent.slice(0, 300),
     p_trampa: trampa || null,
+    p_pais: ubicacion?.pais ?? null,
+    p_zona: ubicacion ? ubicacion.zona.trim().slice(0, 60) : null,
   });
   if (error) throw error;
   return data as string;
 }
 
-export async function estado(tok: string): Promise<{ respuesta_id: string; completa: boolean; items: (Item & { pregunta_id: PreguntaId })[] } | null> {
+export async function estado(
+  tok: string,
+): Promise<{ respuesta_id: string; completa: boolean; pais: Pais | null; zona: string | null; items: (Item & { pregunta_id: PreguntaId })[] } | null> {
   const { data, error } = await supabase.rpc('encuesta_estado', { p_token: tok });
   if (error) throw error;
   if (!data) return null;
-  const d = data as { respuesta_id: string; completa: boolean; items: (Partial<Item> & { pregunta_id: PreguntaId })[] };
+  const d = data as {
+    respuesta_id: string;
+    completa: boolean;
+    pais: Pais | null;
+    zona: string | null;
+    items: (Partial<Item> & { pregunta_id: PreguntaId })[];
+  };
   return {
     ...d,
     items: d.items.map((i) => ({
@@ -91,8 +107,27 @@ export async function estado(tok: string): Promise<{ respuesta_id: string; compl
   };
 }
 
-export async function completar(tok: string, contacto: string, trampa: string) {
-  const { error } = await supabase.rpc('encuesta_completar', { p_token: tok, p_contacto: contacto || null, p_trampa: trampa || null });
+export type Horario = 'manana' | 'tarde' | 'noche';
+
+/** Email o teléfono de 8 a 15 dígitos (el servidor valida lo mismo). */
+export const contactoValido = (c: string) =>
+  /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(c) || (/^\+?[0-9 ()-]+$/.test(c) && c.replace(/\D/g, '').length >= 8 && c.replace(/\D/g, '').length <= 15);
+
+/** Marca la respuesta como completa. Con `datos`, guarda además el aviso/charla y el contacto. */
+export async function completar(
+  tok: string,
+  trampa: string,
+  datos?: { aviso: boolean; charla: boolean; nombre: string; contacto: string; horario: Horario | null },
+) {
+  const { error } = await supabase.rpc('encuesta_completar', {
+    p_token: tok,
+    p_trampa: trampa || null,
+    p_quiere_aviso: datos?.aviso ?? false,
+    p_quiere_charla: datos?.charla ?? false,
+    p_nombre: datos?.nombre ?? null,
+    p_contacto: datos?.contacto ?? null,
+    p_horario: datos?.horario ?? null,
+  });
   if (error) throw error;
 }
 

@@ -1,6 +1,6 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import { Mic, Square, Trash2, RotateCcw } from 'lucide-react';
-import { MAX_AUDIO_SEGUNDOS } from '../../lib/encuesta/preguntas';
+import { MAX_AUDIO_SEGUNDOS, type Pais } from '../../lib/encuesta/preguntas';
 import { mensajeError, subirAudio } from '../../lib/encuesta/api';
 
 // Web Speech API: no está en los tipos de TypeScript y solo existe en algunos navegadores.
@@ -49,12 +49,14 @@ export default function GrabadorAudio({
   respuestaId,
   asegurarRespuesta,
   onChange,
+  pais,
 }: {
   audioPath: string | null;
   transcripcion: string;
   respuestaId: string | null;
   asegurarRespuesta: () => Promise<string>;
   onChange: (a: { audio_url: string | null; transcripcion: string }) => void;
+  pais: Pais | null;
 }) {
   const [estado, setEstado] = useState<Estado>(audioPath ? 'listo' : 'idle');
   const [segundos, setSegundos] = useState(0);
@@ -109,8 +111,8 @@ export default function GrabadorAudio({
     if (!SpeechRecognitionCtor) return;
     try {
       const r = new SpeechRecognitionCtor();
-      // Che arranca en Montevideo: es-AR solo si el celular está en es-AR; si no, es-UY.
-      r.lang = /^es-AR/i.test(navigator.language) ? 'es-AR' : 'es-UY';
+      // Según el país que eligió en P1: Argentina → es-AR; cualquier otro → es-UY.
+      r.lang = pais === 'ar' ? 'es-AR' : 'es-UY';
       r.continuous = true;
       r.interimResults = true;
       r.onresult = (e) => {

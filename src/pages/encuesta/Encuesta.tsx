@@ -2,7 +2,7 @@ import { useEffect, useId, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Check, Share2 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
-import { PREGUNTAS, MAX_TEXTO, maxOpciones, type Pregunta } from '../../lib/encuesta/preguntas';
+import { PREGUNTAS, PAISES, MAX_TEXTO, MAX_ZONA, labelDe, maxOpciones, type Pais, type Pregunta } from '../../lib/encuesta/preguntas';
 import {
   completar,
   estado,
@@ -16,6 +16,7 @@ import {
   type Item,
 } from '../../lib/encuesta/api';
 import GrabadorAudio from './GrabadorAudio';
+import ContactoFinal from './ContactoFinal';
 
 const TOTAL = PREGUNTAS.length;
 type Fase = 'cargando' | 'intro' | 'pregunta' | 'final';
@@ -31,18 +32,72 @@ function Shell({ children }: { children: React.ReactNode }) {
   );
 }
 
+/** "¿Dónde vivís?" + "Ciudad o barrio": arriba de P1, en la misma pantalla. */
+function Ubicacion({
+  pais,
+  zona,
+  onPais,
+  onZona,
+  error,
+}: {
+  pais: Pais | null;
+  zona: string;
+  onPais: (p: Pais) => void;
+  onZona: (z: string) => void;
+  error: string | null;
+}) {
+  const id = useId();
+  return (
+    <div className="mb-8 space-y-4">
+      <fieldset aria-describedby={error ? `${id}-err` : undefined}>
+        <legend className="text-[22px] leading-snug font-semibold mb-3">¿Dónde vivís?</legend>
+        <div className="grid grid-cols-3 gap-2">
+          {PAISES.map((x) => (
+            <label
+              key={x.id}
+              className={`flex flex-col items-center justify-center gap-1 rounded-xl border-2 min-h-[76px] px-2 py-2 text-[15px] text-center cursor-pointer has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-brand ${
+                pais === x.id ? 'border-brand bg-brand-soft font-semibold' : 'border-divider bg-card hover:bg-hover'
+              }`}
+            >
+              <input type="radio" name="pais" className="sr-only" checked={pais === x.id} onChange={() => onPais(x.id)} />
+              <span className="text-2xl" aria-hidden>{x.emoji}</span>
+              {x.label}
+            </label>
+          ))}
+        </div>
+        {error && <p id={`${id}-err`} className="text-danger text-sm mt-2" role="alert">{error}</p>}
+      </fieldset>
+      <div>
+        <label htmlFor={`${id}-zona`} className="block text-[17px] font-semibold mb-1">
+          Ciudad o barrio <span className="text-ink-2 font-normal text-[15px]">(opcional)</span>
+        </label>
+        <input
+          id={`${id}-zona`}
+          className="input h-12 text-[16px]"
+          maxLength={MAX_ZONA}
+          autoComplete="address-level2"
+          value={zona}
+          onChange={(e) => onZona(e.target.value)}
+        />
+      </div>
+    </div>
+  );
+}
+
 function PreguntaPantalla({
   p,
   item,
   onChange,
   respuestaId,
   asegurarRespuesta,
+  pais,
 }: {
   p: Pregunta;
   item: Item;
   onChange: (i: Item) => void;
   respuestaId: string | null;
   asegurarRespuesta: () => Promise<string>;
+  pais: Pais | null;
 }) {
   const max = maxOpciones(p);
   const unica = p.tipo === 'unica';
@@ -88,7 +143,7 @@ function PreguntaPantalla({
                   onClick={() => unica && on && toggle(o.id)}
                 />
                 <span className="text-2xl shrink-0" aria-hidden>{o.emoji}</span>
-                <span className="grow">{o.label}</span>
+                <span className="grow">{labelDe(o, pais)}</span>
                 <span
                   className={`h-6 w-6 shrink-0 rounded-full border-2 flex items-center justify-center ${on ? 'bg-brand-fill border-brand-fill text-white' : 'border-divider'}`}
                   aria-hidden
@@ -131,6 +186,7 @@ function PreguntaPantalla({
           respuestaId={respuestaId}
           asegurarRespuesta={asegurarRespuesta}
           onChange={(a) => onChange({ ...item, ...a })}
+          pais={pais}
         />
       </div>
     </>
@@ -148,8 +204,9 @@ export default function Encuesta() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [trampa, setTrampa] = useState('');
-  const [contacto, setContacto] = useState('');
-  const [contactoOk, setContactoOk] = useState(false);
+  const [pais, setPais] = useState<Pais | null>(null);
+  const [zona, setZona] = useState('');
+  const [errorPais, setErrorPais] = useState<string | null>(null);
   const tok = useRef<string>('');
   const titulo = useRef<HTMLDivElement>(null);
 
@@ -165,6 +222,8 @@ export default function Encuesta() {
           tok.current = token();
         } else if (e) {
           setRespuestaId(e.respuesta_id);
+          setPais(e.pais);
+          setZona(e.zona ?? '');
           setItems(Object.fromEntries(e.items.map(({ pregunta_id, ...i }) => [pregunta_id, i])));
           const primeraSin = PREGUNTAS.findIndex((p) => !e.items.some((i) => i.pregunta_id === p.id));
           setPaso(primeraSin === -1 ? TOTAL - 1 : primeraSin);
@@ -188,7 +247,7 @@ export default function Encuesta() {
   /** Crea la respuesta si todavía no existe (hace falta para subir un audio). */
   const asegurarRespuesta = async () => {
     if (respuestaId) return respuestaId;
-    const id = await guardar(tok.current, p.id, item, trampa);
+    const id = await guardar(tok.current, p.id, item, trampa, ubicacion());
     setRespuestaId(id);
     return id;
   };
@@ -196,7 +255,7 @@ export default function Encuesta() {
   const terminar = async () => {
     setFase('final');
     try {
-      if (respuestaId || Object.values(items).some(itemTieneAlgo)) await completar(tok.current, '', trampa);
+      if (respuestaId || Object.values(items).some(itemTieneAlgo)) await completar(tok.current, trampa);
     } catch {
       /* el contacto se puede reintentar abajo */
     }
@@ -204,12 +263,21 @@ export default function Encuesta() {
     olvidarToken();
   };
 
+  /** País y zona viajan con P1 (y con cualquier guardado mientras estamos en P1). */
+  const ubicacion = () => (paso === 0 && pais ? { pais, zona } : undefined);
+
   const avanzar = async (guardarEste: boolean) => {
     setError(null);
-    if (guardarEste && itemTieneAlgo(item)) {
+    // En P1, "¿Dónde vivís?" es obligatorio para avanzar (también para saltear P1).
+    if (paso === 0 && !pais) {
+      setErrorPais('Elegí dónde vivís para seguir.');
+      return;
+    }
+    // En P1 siempre se guarda, aunque saltee la pregunta, para registrar el país.
+    if ((guardarEste && itemTieneAlgo(item)) || paso === 0) {
       setBusy(true);
       try {
-        setRespuestaId(await guardar(tok.current, p.id, item, trampa));
+        setRespuestaId(await guardar(tok.current, p.id, guardarEste ? item : itemVacio(), trampa, ubicacion()));
       } catch (e) {
         setError(mensajeError(e));
         setBusy(false);
@@ -219,21 +287,6 @@ export default function Encuesta() {
     }
     if (paso < TOTAL - 1) setPaso(paso + 1);
     else await terminar();
-  };
-
-  const guardarContacto = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!contacto.trim()) return;
-    setBusy(true);
-    setError(null);
-    try {
-      await completar(tok.current, contacto.trim(), trampa);
-      setContactoOk(true);
-    } catch (err) {
-      setError(mensajeError(err));
-    } finally {
-      setBusy(false);
-    }
   };
 
   // Campo trampa: invisible para personas, los bots lo completan.
@@ -288,12 +341,15 @@ export default function Encuesta() {
               </li>
             ))}
           </ul>
-          <button
-            className="btn-primary w-full h-14 text-[18px] rounded-xl focus-visible:outline-offset-2"
-            onClick={() => setFase('pregunta')}
-          >
-            {retomar ? 'Seguir donde quedé' : 'Empezar'}
-          </button>
+          {/* Celular (<640px): fijo abajo para que se vea sin scrollear. Pantallas grandes: en su lugar. */}
+          <div className="sticky bottom-0 z-10 -mx-4 px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))] bg-page border-t border-divider sm:static sm:z-auto sm:mx-0 sm:p-0 sm:bg-transparent sm:border-0">
+            <button
+              className="btn-primary w-full h-14 text-[18px] rounded-xl focus-visible:outline-offset-2"
+              onClick={() => setFase('pregunta')}
+            >
+              {retomar ? 'Seguir donde quedé' : 'Empezar'}
+            </button>
+          </div>
           <p className="text-sm text-ink-2 text-center">
             Podés dejarla por la mitad y seguir después desde este mismo celular.{' '}
             <Link to="/privacidad" className="link">Cómo usamos tus datos</Link>
@@ -312,30 +368,8 @@ export default function Encuesta() {
             <h1 className="text-[28px] leading-tight font-bold">¡Gracias!</h1>
             <p className="text-[18px]">Tu respuesta nos ayuda a armar Che.</p>
           </div>
-          {contactoOk ? (
-            <p className="rounded-xl bg-success/15 text-success p-4 text-center font-medium" role="status">
-              Listo, te avisamos cuando esté.
-            </p>
-          ) : (
-            <form className="space-y-2" onSubmit={guardarContacto}>
-              <label htmlFor="contacto" className="block text-[17px] font-semibold">
-                ¿Te avisamos cuando esté lista? <span className="text-ink-2 font-normal text-[15px]">(opcional)</span>
-              </label>
-              <input
-                id="contacto"
-                className="input h-12 text-[16px]"
-                placeholder="Tu email o WhatsApp"
-                autoComplete="email"
-                maxLength={200}
-                value={contacto}
-                onChange={(e) => setContacto(e.target.value)}
-              />
-              <button className="btn-secondary w-full h-12" disabled={busy || !contacto.trim()}>
-                Avisame
-              </button>
-            </form>
-          )}
-          {error && <p className="text-danger text-center" role="alert">{error}</p>}
+          {/* Si salteó todo, no hay respuesta a la que sumarle un contacto. */}
+          {(respuestaId || Object.values(items).some(itemTieneAlgo)) && <ContactoFinal token={tok.current} trampa={trampa} />}
           <a href={share} target="_blank" rel="noreferrer" className="btn-primary w-full h-14 text-[17px] rounded-xl">
             <Share2 size={20} aria-hidden /> Compartir por WhatsApp
           </a>
@@ -360,7 +394,27 @@ export default function Encuesta() {
         </div>
       </div>
 
-      <PreguntaPantalla key={p.id} p={p} item={item} onChange={setItem} respuestaId={respuestaId} asegurarRespuesta={asegurarRespuesta} />
+      {paso === 0 && (
+        <Ubicacion
+          pais={pais}
+          zona={zona}
+          onPais={(x) => {
+            setPais(x);
+            setErrorPais(null);
+          }}
+          onZona={setZona}
+          error={errorPais}
+        />
+      )}
+      <PreguntaPantalla
+        key={p.id}
+        p={p}
+        item={item}
+        onChange={setItem}
+        respuestaId={respuestaId}
+        asegurarRespuesta={asegurarRespuesta}
+        pais={pais}
+      />
 
       {error && <p className="text-danger mt-4" role="alert">{error}</p>}
 

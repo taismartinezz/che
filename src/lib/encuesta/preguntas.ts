@@ -12,7 +12,20 @@ export interface Opcion {
   id: string;
   emoji: string;
   label: string;
+  /** Texto distinto según el país elegido (mismo id de opción). */
+  labelPorPais?: Partial<Record<Pais, string>>;
 }
+
+/** "¿Dónde vivís?" se pide en la misma pantalla que P1. */
+export const PAISES = [
+  { id: 'uy', emoji: '🇺🇾', label: 'Uruguay' },
+  { id: 'ar', emoji: '🇦🇷', label: 'Argentina' },
+  { id: 'otro', emoji: '🌎', label: 'Otro país' },
+] as const;
+export type Pais = (typeof PAISES)[number]['id'];
+export const MAX_ZONA = 60;
+
+export const labelDe = (o: Opcion, pais: Pais | null) => (pais && o.labelPorPais?.[pais]) || o.label;
 
 export interface Pregunta {
   id: PreguntaId;
@@ -126,7 +139,12 @@ export const PREGUNTAS: Pregunta[] = [
       { id: 'comision_baja', emoji: '📉', label: 'Comisión baja o nula' },
       { id: 'mi_version', emoji: '🗨️', label: 'Poder contar mi versión si se quejan' },
       { id: 'opiniones_trabajo', emoji: '⭐', label: 'Que mis opiniones me consigan más trabajo' },
-      { id: 'monotributo', emoji: '🧾', label: 'Ayuda con el monotributo' },
+      {
+        id: 'monotributo',
+        emoji: '🧾',
+        label: 'Ayuda con el monotributo',
+        labelPorPais: { ar: 'Ayuda con el monotributo (AFIP/ARCA)', uy: 'Ayuda con el monotributo (BPS)' },
+      },
       { id: 'seguro', emoji: '🩹', label: 'Un seguro de accidentes' },
     ],
   },

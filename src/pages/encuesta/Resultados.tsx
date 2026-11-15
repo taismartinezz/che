@@ -7,13 +7,19 @@ import { EmptyState, RowSkeleton } from '../../components/States';
 import { useMe } from '../../context/AuthContext';
 import { useUI } from '../../context/UIContext';
 import { supabase } from '../../lib/supabase';
-import { PREGUNTAS, ROLES, type Pregunta, type Rol } from '../../lib/encuesta/preguntas';
+import { PAISES, PREGUNTAS, ROLES, type Pais, type Pregunta, type Rol } from '../../lib/encuesta/preguntas';
 
 interface Respuesta {
   id: string;
   rol: Rol | null;
+  pais: Pais | null;
+  zona: string | null;
   completa: boolean;
   contacto: string | null;
+  quiere_aviso: boolean;
+  quiere_charla: boolean;
+  nombre: string | null;
+  horario: 'manana' | 'tarde' | 'noche' | null;
   user_agent: string | null;
   con_cuenta: boolean;
   creado_en: string;
@@ -30,6 +36,8 @@ interface ItemRow {
   creado_en: string;
 }
 
+const PAIS_LABEL = Object.fromEntries(PAISES.map((x) => [x.id, x.label])) as Record<Pais, string>;
+const HORARIOS = { manana: 'Mañana', tarde: 'Tarde', noche: 'Noche' } as const;
 const fmtFecha = (iso: string) => new Intl.DateTimeFormat('es-AR', { day: 'numeric', month: 'short' }).format(new Date(iso));
 const fmtFechaHora = (iso: string) =>
   new Intl.DateTimeFormat('es-AR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }).format(new Date(iso));
@@ -125,7 +133,8 @@ function LineaPorDia({ puntos }: { puntos: { dia: string; n: number }[] }) {
       {h && (
         <div
           className="pointer-events-none absolute top-0 -translate-x-1/2 rounded-md bg-card border border-divider shadow-pop px-2 py-1 text-xs whitespace-nowrap"
-          style={{ left: `${(x(hover!) / W) * 100}%` }}
+          // Que no se corte en los bordes en pantallas angostas.
+          style={{ left: `clamp(3.5rem, ${(x(hover!) / W) * 100}%, calc(100% - 3.5rem))` }}
           role="status"
         >
           <span className="text-ink-2">{fmtFecha(`${h.dia}T12:00:00`)}</span> · <strong className="tabular-nums">{h.n}</strong>
@@ -255,7 +264,7 @@ function exportarCSV(respuestas: Respuesta[], items: ItemRow[]) {
     if (!porResp.has(i.respuesta_id)) porResp.set(i.respuesta_id, new Map());
     porResp.get(i.respuesta_id)!.set(i.pregunta_id, i);
   }
-  const header = ['id', 'fecha', 'rol', 'completa', 'con_cuenta', 'contacto'];
+  const header = ['id', 'fecha', 'rol', 'pais', 'zona', 'completa', 'con_cuenta', 'quiere_aviso', 'quiere_charla', 'nombre', 'contacto', 'horario'];
   for (const p of PREGUNTAS) header.push(p.id, `${p.id}_texto`, `${p.id}_audio`, `${p.id}_transcripcion`);
   const esc = (v: unknown) => {
     const s = v === null || v === undefined ? '' : String(v);
@@ -263,7 +272,10 @@ function exportarCSV(respuestas: Respuesta[], items: ItemRow[]) {
   };
   const rows = respuestas.map((r) => {
     const m = porResp.get(r.id);
-    const cols: unknown[] = [r.id, r.creado_en, r.rol ? ROLES[r.rol] : '', r.completa ? 'sí' : 'no', r.con_cuenta ? 'sí' : 'no', r.contacto];
+    const cols: unknown[] = [
+      r.id, r.creado_en, r.rol ? ROLES[r.rol] : '', r.pais ? PAIS_LABEL[r.pais] : '', r.zona, r.completa ? 'sí' : 'no', r.con_cuenta ? 'sí' : 'no',
+      r.quiere_aviso ? 'sí' : 'no', r.quiere_charla ? 'sí' : 'no', r.nombre, r.contacto, r.horario ? HORARIOS[r.horario] : '',
+    ];
     for (const p of PREGUNTAS) {
       const i = m?.get(p.id);
       cols.push(celdaPregunta(p, i), i?.texto, i?.audio_url, i?.transcripcion);
@@ -286,14 +298,30 @@ function DetalleRespuesta({ r, items, onClose }: { r: Respuesta; items: ItemRow[
       <dl className="text-sm grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 mb-4">
         <dt className="text-ink-2">Rol</dt>
         <dd>{r.rol ? ROLES[r.rol] : '—'}</dd>
+        <dt className="text-ink-2">Dónde vive</dt>
+        <dd>{[r.pais && PAIS_LABEL[r.pais], r.zona].filter(Boolean).join(' · ') || '—'}</dd>
         <dt className="text-ink-2">Completa</dt>
         <dd>{r.completa ? 'Sí' : 'No'}</dd>
         <dt className="text-ink-2">Con cuenta de Che</dt>
         <dd>{r.con_cuenta ? 'Sí' : 'No'}</dd>
+        {r.nombre && (
+          <>
+            <dt className="text-ink-2">Nombre</dt>
+            <dd>{r.nombre}</dd>
+          </>
+        )}
         {r.contacto && (
           <>
             <dt className="text-ink-2">Contacto</dt>
             <dd className="break-all">{r.contacto}</dd>
+          </>
+        )}
+        {(r.quiere_aviso || r.quiere_charla) && (
+          <>
+            <dt className="text-ink-2">Pidió</dt>
+            <dd>
+              {[r.quiere_aviso && 'Aviso', r.quiere_charla && `Charla${r.horario ? ` (${HORARIOS[r.horario]})` : ''}`].filter(Boolean).join(' · ')}
+            </dd>
           </>
         )}
       </dl>
@@ -317,6 +345,41 @@ function DetalleRespuesta({ r, items, onClose }: { r: Respuesta; items: ItemRow[
   );
 }
 
+/** Personas que se anotaron para una charla de 15 minutos. */
+function Charlas({ respuestas, onVer }: { respuestas: Respuesta[]; onVer: (r: Respuesta) => void }) {
+  const lista = respuestas.filter((r) => r.quiere_charla);
+  if (lista.length === 0) return null;
+  return (
+    <section className="card p-2 sm:p-4 overflow-x-auto">
+      <h2 className="font-semibold mb-2 px-2 sm:px-0">Quieren una charla ({lista.length})</h2>
+      <table className="w-full text-sm">
+        <thead>
+          <tr className="text-left text-ink-2 border-b border-divider">
+            <th className="py-2 pr-3 font-medium">Nombre</th>
+            <th className="py-2 pr-3 font-medium">Contacto</th>
+            <th className="py-2 pr-3 font-medium">Horario</th>
+            <th className="py-2 pr-3 font-medium">Rol</th>
+            <th className="py-2 font-medium"><span className="sr-only">Respuestas</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          {lista.map((r) => (
+            <tr key={r.id} className="border-b border-divider last:border-0">
+              <td className="py-2 pr-3">{r.nombre}</td>
+              <td className="py-2 pr-3 break-all">{r.contacto}</td>
+              <td className="py-2 pr-3">{r.horario ? HORARIOS[r.horario] : '—'}</td>
+              <td className="py-2 pr-3">{r.rol ? ROLES[r.rol] : '—'}</td>
+              <td className="py-2 text-right">
+                <button className="link whitespace-nowrap" onClick={() => onVer(r)}>Ver respuestas</button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
+  );
+}
+
 /** /encuesta/resultados — solo admins (la RPC también lo verifica). */
 export default function Resultados() {
   const { priv } = useMe();
@@ -324,18 +387,26 @@ export default function Resultados() {
   const [rol, setRol] = useState<Rol | ''>('');
   const [desde, setDesde] = useState('');
   const [hasta, setHasta] = useState('');
+  const [charla, setCharla] = useState(false);
+  const [pais, setPais] = useState<Pais | ''>('');
   const [data, setData] = useState<{ respuestas: Respuesta[]; items: ItemRow[] } | null>(null);
   const [vista, setVista] = useState<'preguntas' | 'respuestas'>('preguntas');
   const [abierta, setAbierta] = useState<Respuesta | null>(null);
 
   const load = useCallback(async () => {
     setData(null);
-    const { data: d, error } = await supabase.rpc('admin_encuesta', { p_rol: rol || null, p_desde: desde || null, p_hasta: hasta || null });
+    const { data: d, error } = await supabase.rpc('admin_encuesta', {
+      p_rol: rol || null,
+      p_desde: desde || null,
+      p_hasta: hasta || null,
+      p_charla: charla ? true : null,
+      p_pais: pais || null,
+    });
     if (error) {
       toastError(error);
       setData({ respuestas: [], items: [] });
     } else setData(d as { respuestas: Respuesta[]; items: ItemRow[] });
-  }, [rol, desde, hasta, toastError]);
+  }, [rol, desde, hasta, charla, pais, toastError]);
 
   useEffect(() => {
     if (priv.is_admin) load();
@@ -360,6 +431,7 @@ export default function Resultados() {
     return {
       total: respuestas.length,
       completas: respuestas.filter((r) => r.completa).length,
+      paises: Object.fromEntries(PAISES.map((x) => [x.id, respuestas.filter((r) => r.pais === x.id).length])) as Record<Pais, number>,
       roles: Object.fromEntries((Object.keys(ROLES) as Rol[]).map((k) => [k, respuestas.filter((r) => r.rol === k).length])) as Record<Rol, number>,
       puntos,
       answered,
@@ -386,13 +458,22 @@ export default function Resultados() {
       </div>
 
       {/* Filtros: una fila arriba de todo; todo se recalcula. */}
-      <section className="card p-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <section className="card p-4 grid grid-cols-2 sm:grid-cols-5 gap-3 items-end">
         <div>
           <label className="label" htmlFor="r-rol">Rol (P1)</label>
           <select id="r-rol" className="input h-10" value={rol} onChange={(e) => setRol(e.target.value as Rol | '')}>
             <option value="">Todos</option>
             {(Object.keys(ROLES) as Rol[]).map((k) => (
               <option key={k} value={k}>{ROLES[k]}</option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label className="label" htmlFor="r-pais">País</label>
+          <select id="r-pais" className="input h-10" value={pais} onChange={(e) => setPais(e.target.value as Pais | '')}>
+            <option value="">Todos</option>
+            {PAISES.map((x) => (
+              <option key={x.id} value={x.id}>{x.label}</option>
             ))}
           </select>
         </div>
@@ -404,6 +485,10 @@ export default function Resultados() {
           <label className="label" htmlFor="r-hasta">Hasta</label>
           <input id="r-hasta" type="date" className="input h-10" value={hasta} onChange={(e) => setHasta(e.target.value)} />
         </div>
+        <label className="flex items-center gap-2 h-10 cursor-pointer text-[15px]">
+          <input type="checkbox" className="h-5 w-5 accent-[rgb(var(--brand))]" checked={charla} onChange={(e) => setCharla(e.target.checked)} />
+          Quiere charla
+        </label>
       </section>
 
       {!data || !stats ? (
@@ -418,11 +503,18 @@ export default function Resultados() {
               <Tile label="Trabajan" value={stats.roles.trabajo} />
               <Tile label="Las dos cosas" value={stats.roles.ambos} />
             </div>
+            <div className="grid grid-cols-3 gap-3">
+              {PAISES.map((x) => (
+                <Tile key={x.id} label={x.label} value={stats.paises[x.id]} sub={`${pct(stats.paises[x.id], stats.total)}%`} />
+              ))}
+            </div>
             <div>
               <h2 className="font-semibold mb-2">Respuestas por día</h2>
               <LineaPorDia puntos={stats.puntos} />
             </div>
           </section>
+
+          <Charlas respuestas={data.respuestas} onVer={setAbierta} />
 
           <div className="flex gap-2" role="tablist" aria-label="Vista">
             {(['preguntas', 'respuestas'] as const).map((v) => (
