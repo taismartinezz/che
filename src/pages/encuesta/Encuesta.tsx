@@ -168,11 +168,13 @@ export default function Encuesta() {
           setItems(Object.fromEntries(e.items.map(({ pregunta_id, ...i }) => [pregunta_id, i])));
           const primeraSin = PREGUNTAS.findIndex((p) => !e.items.some((i) => i.pregunta_id === p.id));
           setPaso(primeraSin === -1 ? TOTAL - 1 : primeraSin);
-          setRetomar(e.items.length > 0);
+          setRetomar(true);
+          // Si ya respondió al menos una pregunta, no repetimos la bienvenida.
+          if (e.items.length > 0) return setFase('pregunta');
         }
+        setFase('intro');
       })
-      .catch(() => undefined)
-      .finally(() => setFase('intro'));
+      .catch(() => setFase('intro'));
   }, []);
 
   useEffect(() => {
@@ -255,18 +257,47 @@ export default function Encuesta() {
     return (
       <Shell>
         {trampaInput}
-        <div ref={titulo} tabIndex={-1} className="outline-none my-auto space-y-5 text-center">
-          <h1 className="text-[28px] leading-tight font-bold">Ayudanos a armar Che</h1>
-          <p className="text-[18px]">10 preguntas cortas. Son 3 minutos.</p>
-          <p className="text-[15px] text-ink-2 rounded-xl bg-card border border-divider p-4">
-            {profile
-              ? 'Si mandás un audio, lo escucha solo el equipo de Che. Como entraste con tu cuenta, guardamos tu usuario junto a tus respuestas.'
-              : 'Es anónima. Si mandás un audio, lo escucha solo el equipo de Che.'}{' '}
-            <Link to="/privacidad" className="link">Privacidad</Link>
+        <div ref={titulo} tabIndex={-1} className="outline-none my-auto space-y-5">
+          <h1 className="text-[28px] leading-tight font-bold">
+            Ayudanos a armar Che <span aria-hidden>🧉</span>
+          </h1>
+          <p className="text-[17px] leading-relaxed">
+            Che es una app para conseguir ayuda (un arreglo, una mudanza, alguien que cuide a tu perro) a través de gente en
+            la que ya confiás: tus amigos y los amigos de tus amigos. Y para que quien hace changas consiga más trabajo y
+            cobre seguro.
           </p>
-          <button className="btn-primary w-full h-14 text-[18px] rounded-xl" onClick={() => setFase('pregunta')}>
+          <p className="text-[17px] leading-relaxed">
+            Antes de seguir construyéndola, queremos escucharte, ya sea que contrates changas, las hagas o las dos cosas.
+          </p>
+          <ul className="space-y-3 rounded-xl bg-card border border-divider p-4 text-[16px]">
+            {[
+              ['⏱️', '10 preguntas, unos 3 minutos.'],
+              ['👆', 'Casi todo se responde tocando una opción.'],
+              ['🤷', 'Si una pregunta no tiene que ver con vos, tocá "No aplica para mí".'],
+              ['🎤', 'Si preferís hablar en vez de escribir, mandá un audio.'],
+              [
+                '🔒',
+                profile
+                  ? 'Es confidencial: tus respuestas y audios solo los ve el equipo de Che. Como entraste con tu cuenta, guardamos tu usuario junto a tus respuestas.'
+                  : 'Es confidencial: tus respuestas y audios solo los ve el equipo de Che. No hace falta tener cuenta.',
+              ],
+            ].map(([icono, texto]) => (
+              <li key={icono} className="flex gap-3">
+                <span className="text-xl leading-6 shrink-0" aria-hidden>{icono}</span>
+                <span>{texto}</span>
+              </li>
+            ))}
+          </ul>
+          <button
+            className="btn-primary w-full h-14 text-[18px] rounded-xl focus-visible:outline-offset-2"
+            onClick={() => setFase('pregunta')}
+          >
             {retomar ? 'Seguir donde quedé' : 'Empezar'}
           </button>
+          <p className="text-sm text-ink-2 text-center">
+            Podés dejarla por la mitad y seguir después desde este mismo celular.{' '}
+            <Link to="/privacidad" className="link">Cómo usamos tus datos</Link>
+          </p>
         </div>
       </Shell>
     );
