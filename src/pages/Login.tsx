@@ -21,6 +21,12 @@ export function PublicFooter() {
   );
 }
 
+/**
+ * "Seguir con Google" está oculto hasta activar el proveedor Google en Supabase
+ * (Authentication → Sign In / Providers). Para volver a mostrarlo: true.
+ */
+const GOOGLE_ENABLED = false;
+
 /** Google blocks OAuth inside in-app browsers ("403 disallowed_useragent"). */
 const IN_APP_BROWSER = /FBAN|FBAV|FB_IAB|Instagram|Line\/|TikTok|Snapchat|LinkedInApp|; wv\)/i.test(navigator.userAgent);
 
@@ -125,6 +131,8 @@ export default function Login() {
                     </button>
                   </form>
                   <p className="text-center text-sm text-ink-2">{t('auth.no_password')}</p>
+                  {GOOGLE_ENABLED && (
+                  <>
                   <div className="flex items-center gap-3 text-ink-2 text-sm">
                     <hr className="grow border-divider" /> {t('auth.or')} <hr className="grow border-divider" />
                   </div>
@@ -145,6 +153,8 @@ export default function Login() {
                     </svg>
                     {t('auth.google')}
                   </button>
+                  </>
+                  )}
                 </>
               )}
               {error && <p className="text-danger text-sm text-center" role="alert">{error}</p>}
