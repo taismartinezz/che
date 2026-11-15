@@ -109,7 +109,8 @@ export default function GrabadorAudio({
     if (!SpeechRecognitionCtor) return;
     try {
       const r = new SpeechRecognitionCtor();
-      r.lang = 'es-AR';
+      // Che arranca en Montevideo: es-AR solo si el celular está en es-AR; si no, es-UY.
+      r.lang = /^es-AR/i.test(navigator.language) ? 'es-AR' : 'es-UY';
       r.continuous = true;
       r.interimResults = true;
       r.onresult = (e) => {
