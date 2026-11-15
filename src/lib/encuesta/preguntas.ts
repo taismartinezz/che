@@ -131,7 +131,7 @@ export const PREGUNTAS: Pregunta[] = [
   },
   {
     id: 'p8',
-    titulo: '¿Qué necesitarías para sentirte respaldado/a?',
+    titulo: 'Si hacés changas: ¿qué necesitarías para sentirte respaldado/a?',
     tipo: 'multiple',
     max: 3,
     opciones: [
