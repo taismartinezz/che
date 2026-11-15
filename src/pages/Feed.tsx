@@ -9,6 +9,7 @@ import RequestCard from '../components/RequestCard';
 import CreateRequestDialog from '../components/CreateRequestDialog';
 import { InviteCard } from '../components/InviteProgress';
 import ValoracionesCard from '../components/ayuda/Valoraciones';
+import EncuestaBanner from '../components/EncuestaBanner';
 import { EmptyState, PostSkeleton } from '../components/States';
 import { useMe } from '../context/AuthContext';
 import { useUI } from '../context/UIContext';
@@ -115,6 +116,7 @@ export default function Feed() {
       </div>
 
       <InviteCard />
+      <EncuestaBanner />
       <ValoracionesCard />
 
       {/* Filters + search */}

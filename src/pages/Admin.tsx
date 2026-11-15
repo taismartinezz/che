@@ -97,6 +97,9 @@ export default function Admin() {
       <Link to="/admin/ayuda" className="card p-4 flex items-center justify-between font-semibold hover:bg-hover">
         {t('ayuda.admin.link')} <span aria-hidden>→</span>
       </Link>
+      <Link to="/encuesta/resultados" className="card p-4 flex items-center justify-between font-semibold hover:bg-hover">
+        Resultados de la encuesta <span aria-hidden>→</span>
+      </Link>
       <section className="card p-4">
         <h2 className="font-semibold mb-3">{t('admin.metrics')}</h2>
         {!metrics ? (

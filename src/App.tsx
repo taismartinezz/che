@@ -31,6 +31,8 @@ import MisReclamos from './pages/ayuda/MisReclamos';
 import Reporte from './pages/ayuda/Reporte';
 import Sugerencia from './pages/ayuda/Sugerencia';
 import AdminAyuda from './pages/AdminAyuda';
+import Encuesta from './pages/encuesta/Encuesta';
+import ResultadosEncuesta from './pages/encuesta/Resultados';
 import { clearWelcomePending, isWelcomePending, rememberNextPath, takeNextPath } from './lib/firstRun';
 
 /** Redeems a stored invite code once the user has finished onboarding. */
@@ -110,6 +112,7 @@ function AppRoutes() {
     <Route key="p" path="/privacidad" element={<Legal kind="privacy" />} />,
     <Route key="i" path="/invite/:code" element={<Invite />} />,
     <Route key="a" path="/ayuda" element={<Ayuda />} />,
+    <Route key="e" path="/encuesta" element={<Encuesta />} />,
   ];
 
   if (!session)
@@ -154,6 +157,7 @@ function AppRoutes() {
         <Route path="/notificaciones" element={<Notifications />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/admin/ayuda" element={<AdminAyuda />} />
+        <Route path="/encuesta/resultados" element={<ResultadosEncuesta />} />
         <Route path="/ayuda/reclamo" element={<Reclamo />} />
         <Route path="/ayuda/reclamos/:id" element={<ReclamoDetalle />} />
         <Route path="/ayuda/mis-reclamos" element={<MisReclamos />} />

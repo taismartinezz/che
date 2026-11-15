@@ -62,7 +62,10 @@ Without the env vars, the app shows a setup screen.
    bug reports, feedback, ratings after a favour, roadmap votes and the admin panel (`/admin/ayuda`). It creates the
    private `reclamos` storage bucket (images only, 5 MB) and a key `che_datos_sensibles` in **Supabase Vault** used to
    encrypt claim descriptions and messages (pgcrypto, AES-256). Don't delete or rotate that secret without re-encrypting.
-3. **Email + push notifications.** These are sent by the Edge Function in `supabase/functions/notify`.
+3. Run `supabase/migrations/20261116000000_encuesta.sql`: the public survey (`/encuesta`, no account needed) and
+   its admin results (`/encuesta/resultados`). It creates the private `encuesta-audios` bucket. Questions live in
+   `src/lib/encuesta/preguntas.ts`. Limit: 3 responses per device and 20 per IP per day.
+4. **Email + push notifications.** These are sent by the Edge Function in `supabase/functions/notify`.
    1. Generate VAPID keys once with `npx web-push generate-vapid-keys`.
    2. Set the secrets and deploy:
       ```bash
@@ -77,7 +80,7 @@ Without the env vars, the app shows a setup screen.
    5. In Resend, verify the `checonoces.com` domain so emails don't land in spam.
 
    Either channel is skipped when its keys are missing. Users turn each one on or off in Configuración → Avisos. Chat messages create at most one notification per sender until it is read, so a conversation doesn't flood the user's inbox or phone.
-4. **Verification.** Admins see pending requests in `/admin`. They open each document through a 2-minute signed link, tick "Antecedentes revisados" when the certificate is clear, and approve or reject. The documents are deleted right after the decision. Accepted background certificates are the Policía Nacional one (Uruguay) and the Registro Nacional de Reincidencia one (Argentina).
+5. **Verification.** Admins see pending requests in `/admin`. They open each document through a 2-minute signed link, tick "Antecedentes revisados" when the certificate is clear, and approve or reject. The documents are deleted right after the decision. Accepted background certificates are the Policía Nacional one (Uruguay) and the Registro Nacional de Reincidencia one (Argentina).
 
 ### Seed data (testing only)
 
