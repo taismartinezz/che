@@ -109,7 +109,8 @@ export default function GrabadorAudio({
     if (!SpeechRecognitionCtor) return;
     try {
       const r = new SpeechRecognitionCtor();
-      r.lang = 'es-AR';
+      // Montevideo o Buenos Aires: según el idioma del celular; si no es ninguno de los dos, es-AR.
+      r.lang = /^es-UY/i.test(navigator.language) ? 'es-UY' : 'es-AR';
       r.continuous = true;
       r.interimResults = true;
       r.onresult = (e) => {
