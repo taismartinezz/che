@@ -2,6 +2,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft, MessageSquareWarning, Send } from 'lucide-react';
+import TestAgreements from '../components/TestAgreements';
+import { mvp2Enabled } from '../lib/mvp2';
 import Menu from '../components/Menu';
 import Layout from '../components/Layout';
 import Avatar from '../components/Avatar';
@@ -185,6 +187,7 @@ function Thread({ otherId, onSent }: { otherId: string; onSent: () => void }) {
             );
           })
         )}
+        {mvp2Enabled && canReply && <TestAgreements me={me.id} otherId={otherId} />}
         <div ref={bottom} />
       </div>
       {canReply ? (
@@ -235,6 +238,7 @@ export default function Chat() {
       <div className="card overflow-hidden flex h-[calc(100dvh-140px)] wide:h-[calc(100dvh-90px)]">
         <aside className={`${id ? 'hidden wide:block' : 'block'} w-full wide:w-[320px] wide:border-r border-divider overflow-y-auto shrink-0`}>
           <h1 className="text-xl font-semibold px-4 pt-3">{t('chat.title')}</h1>
+          {mvp2Enabled && <Link className="btn-ghost" to="/antecedentes">{t('mvp2.record')}</Link>}
           <Inbox conversations={conversations} activeId={id} />
         </aside>
         <section className={`${id ? 'flex' : 'hidden wide:flex'} grow min-w-0 flex-col`}>

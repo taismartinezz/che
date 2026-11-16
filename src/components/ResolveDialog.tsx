@@ -8,7 +8,7 @@ import { api } from '../lib/api';
 import { PROFILE_MINI } from '../lib/constants';
 import { useData } from '../context/DataContext';
 import { useUI } from '../context/UIContext';
-import type { MiniProfile, RequestRow } from '../lib/types';
+import type { Profile, RequestRow } from '../lib/types';
 
 export default function ResolveDialog({
   request,
@@ -16,7 +16,7 @@ export default function ResolveDialog({
   onClose,
   onDone,
 }: {
-  request: Pick<RequestRow, 'id' | 'author_id'>;
+  request: Pick<RequestRow, 'id' | 'author_id' | 'category'>;
   open: boolean;
   onClose: () => void;
   onDone: () => void;
@@ -24,7 +24,7 @@ export default function ResolveDialog({
   const { t } = useTranslation();
   const { friends } = useData();
   const { toast, toastError } = useUI();
-  const [candidates, setCandidates] = useState<MiniProfile[] | null>(null);
+  const [candidates, setCandidates] = useState<Profile[] | null>(null);
   const [helper, setHelper] = useState<string | null>(null);
   const [note, setNote] = useState('');
   const [busy, setBusy] = useState(false);
@@ -40,16 +40,21 @@ export default function ResolveDialog({
       const ids = [
         ...new Set([...(offers ?? []).map((o) => o.helper_id as string), ...(intros ?? []).map((i) => i.target_id as string)]),
       ];
-      let list: MiniProfile[] = [];
+      let list: Profile[] = [];
       if (ids.length) {
         const { data } = await supabase.from('profiles').select(PROFILE_MINI).in('id', ids);
-        list = (data ?? []) as MiniProfile[];
+        list = (data ?? []) as Profile[];
       }
-      for (const f of friends) if (!list.some((x) => x.id === f.id)) list.push(f);
-      setCandidates(list);
-      setHelper(list[0]?.id ?? null);
+      const extraIds = friends.filter(f => !list.some(x => x.id === f.id)).map(f => f.id);
+      if (extraIds.length) {
+        const { data } = await supabase.from('profiles').select(PROFILE_MINI).in('id', extraIds);
+        list.push(...((data ?? []) as Profile[]));
+      }
+      const eligible = request.category === 'cuidado' ? list.filter(p => p.verification_status === 'verified' && p.background_checked) : list;
+      setCandidates(eligible);
+      setHelper(eligible[0]?.id ?? null);
     })();
-  }, [open, request.id, friends]);
+  }, [open, request.id, request.category, friends]);
 
   const submit = async () => {
     setBusy(true);

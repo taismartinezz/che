@@ -7,7 +7,7 @@ import { useUI } from '../context/UIContext';
 import { useMe } from '../context/AuthContext';
 import { ayudaApi } from '../lib/ayuda';
 
-const TODAY = ['requests', 'offers', 'network', 'recs', 'intros', 'exchanges', 'chat', 'groups', 'share', 'notifications', 'verification', 'safety', 'lang'];
+const TODAY = ['requests', 'offers', 'network', 'recs', 'intros', 'exchanges', 'chat', 'groups', 'share', 'safety', 'lang'];
 const COMING: SoonFeature[] = ['payments', 'registered_worker', 'invoices'];
 
 export default function Roadmap() {
@@ -54,15 +54,21 @@ export default function Roadmap() {
         </section>
 
         <section className="card p-4">
-          <h2 className="font-semibold mb-3">{t('roadmap.today')}</h2>
+          <h2 className="font-semibold mb-3">{t('mvp2.configured')}</h2>
+          <p className="text-sm text-ink-2 mb-3">{t('mvp2.configuredBody')}</p>
           <ul className="space-y-2">
             {TODAY.map((k) => (
               <li key={k} className="flex items-start gap-3">
                 <span className="grow">{t(`roadmap.items_today.${k}`)}</span>
-                <span className="tag-ok shrink-0">{t('roadmap.available')}</span>
+                <span className="tag-ok shrink-0">{t('mvp2.configured')}</span>
               </li>
             ))}
           </ul>
+        </section>
+
+        <section className="card p-4 space-y-2">
+          <h2 className="font-semibold">{t('mvp2.testing')}</h2>
+          <p>{t('mvp2.testingBody')}</p>
         </section>
 
         <section className="card p-4">

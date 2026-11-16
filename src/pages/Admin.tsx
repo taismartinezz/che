@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Layout from '../components/Layout';
 import { EmptyState, RowSkeleton } from '../components/States';
+import TestAgreements from '../components/TestAgreements';
+import { mvp2Enabled } from '../lib/mvp2';
 import AdminVerifications from '../components/AdminVerifications';
 import { useMe } from '../context/AuthContext';
 import { useUI } from '../context/UIContext';
@@ -38,7 +40,7 @@ interface Metrics {
 
 export default function Admin() {
   const { t, i18n } = useTranslation();
-  const { priv } = useMe();
+  const { priv, me } = useMe();
   const { toastError } = useUI();
   const [reports, setReports] = useState<Report[] | null>(null);
   const [metrics, setMetrics] = useState<Metrics | null>(null);
@@ -118,6 +120,7 @@ export default function Admin() {
       </section>
 
       <AdminVerifications />
+      {mvp2Enabled && <TestAgreements me={me.id} moderation />}
 
       <section className="card p-4">
         <h2 className="font-semibold mb-3">{t('admin.reports')}</h2>

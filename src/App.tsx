@@ -23,6 +23,8 @@ import GroupPage from './pages/GroupPage';
 import Notifications from './pages/Notifications';
 import Legal from './pages/Legal';
 import { INVITE_KEY, Invite, NotFound, Setup } from './pages/Misc';
+import { mvp2Enabled } from './lib/mvp2';
+import { SharedTestRecord, TestWorkRecord } from './pages/TestWorkRecord';
 import Welcome from './pages/Welcome';
 import Ayuda from './pages/ayuda/Ayuda';
 import Reclamo from './pages/ayuda/Reclamo';
@@ -108,6 +110,7 @@ function AppRoutes() {
   if (loading) return <FullScreenLoader />;
 
   const legal = [
+    ...(mvp2Enabled ? [<Route key="work-share" path="/antecedente/:token" element={<SharedTestRecord />} />] : []),
     <Route key="t" path="/terminos" element={<Legal kind="terms" />} />,
     <Route key="p" path="/privacidad" element={<Legal kind="privacy" />} />,
     <Route key="i" path="/invite/:code" element={<Invite />} />,
@@ -148,6 +151,7 @@ function AppRoutes() {
         <Route path="/red" element={<Network />} />
         <Route path="/grupos" element={<Groups />} />
         <Route path="/grupos/:id" element={<GroupPage />} />
+        {mvp2Enabled && <Route path="/antecedentes" element={<TestWorkRecord />} />}
         <Route path="/chat" element={<Chat />} />
         <Route path="/chat/:id" element={<Chat />} />
         <Route path="/pagos" element={<SoonPage feature="payments" />} />
