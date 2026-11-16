@@ -13,7 +13,7 @@ import { useOpenWhatsApp } from '../hooks/useOpenWhatsApp';
 import { supabase } from '../lib/supabase';
 import { api } from '../lib/api';
 import { PROFILE_MINI } from '../lib/constants';
-import { REQUEST_COLUMNS, type IntroRequest, type MiniProfile, type RequestRow } from '../lib/types';
+import { REQUEST_COLUMNS, type IntroRequest, type MiniProfile, type Profile, type RequestRow } from '../lib/types';
 
 interface Exchange {
   helper_id: string;
@@ -52,7 +52,9 @@ export default function RequestPage() {
     const ids = [...new Set([...oIds, ...iRows.flatMap((i) => [i.target_id, i.via_id ?? '']), ex?.helper_id ?? ''].filter(Boolean))];
     if (ids.length) {
       const { data: ps } = await supabase.from('profiles').select(PROFILE_MINI).in('id', ids);
-      setPeople(Object.fromEntries(((ps ?? []) as MiniProfile[]).map((p) => [p.id, p])));
+      const profiles = (ps ?? []) as Profile[];
+      if (req.category === 'cuidado') setOfferIds(oIds.filter(id => profiles.some(p => p.id === id && p.verification_status === 'verified' && p.background_checked)));
+      setPeople(Object.fromEntries(profiles.map((p) => [p.id, p])));
     }
   }, [id]);
 

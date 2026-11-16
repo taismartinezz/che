@@ -2,6 +2,7 @@ import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import es from './es';
 import en from './en';
+import { mvp2Es, mvp2En } from './mvp2';
 import ayudaEs from './ayuda.es';
 import ayudaEn from './ayuda.en';
 
@@ -23,7 +24,7 @@ function initialLanguage(): 'es' | 'en' {
 }
 
 i18n.use(initReactI18next).init({
-  resources: { es: { translation: { ...es, ayuda: ayudaEs } }, en: { translation: { ...en, ayuda: ayudaEn } } },
+  resources: { es: { translation: { ...es, ayuda: ayudaEs, mvp2: mvp2Es } }, en: { translation: { ...en, ayuda: ayudaEn, mvp2: mvp2En } } },
   lng: initialLanguage(),
   fallbackLng: 'es',
   interpolation: { escapeValue: false },
